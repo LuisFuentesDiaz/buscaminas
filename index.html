@@ -266,16 +266,27 @@
             border: 2px solid var(--accent-secondary);
         }
 
-        /* Botón de instalación PWA */
-        .install-btn {
+        /* Contenedor de instalación PWA */
+        .install-wrapper {
             display: none;
+            align-items: center;
+            gap: 2px;
+            position: relative;
+        }
+
+        .install-wrapper.visible {
+            display: flex;
+        }
+
+        .install-btn {
+            display: flex;
             align-items: center;
             gap: 6px;
             padding: 8px 16px;
             background: linear-gradient(135deg, var(--accent-secondary), #00c4cc);
             color: var(--bg-primary);
             border: none;
-            border-radius: 8px;
+            border-radius: 8px 0 0 8px;
             font-family: 'Space Mono', monospace;
             font-size: 0.75rem;
             font-weight: 700;
@@ -290,8 +301,24 @@
             box-shadow: 0 6px 20px rgba(0, 245, 255, 0.5);
         }
 
-        .install-btn.visible {
+        .install-dismiss {
             display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 8px;
+            background: rgba(0, 245, 255, 0.15);
+            color: var(--accent-secondary);
+            border: none;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .install-dismiss:hover {
+            background: rgba(255, 0, 110, 0.3);
+            color: var(--accent-primary);
         }
 
         .difficulty-selector {
@@ -761,12 +788,6 @@
                 z-index: 200;
             }
 
-            /* Ocultar botón de instalación en móvil */
-            .install-btn,
-            .install-btn.visible {
-                display: none !important;
-            }
-
             /* Ocultar botón de sonido del stats panel en móvil */
             .stats-panel #soundBtn {
                 display: none;
@@ -975,11 +996,6 @@
 
             .mobile-diff-menu {
                 z-index: 200;
-            }
-
-            .install-btn,
-            .install-btn.visible {
-                display: none !important;
             }
 
             .stats-panel #soundBtn {
@@ -1322,7 +1338,10 @@
                 <div class="controls">
                     <button class="btn btn-primary" id="newGameBtn"><span class="btn-label-desktop">Nuevo Juego</span><span class="btn-label-mobile">▶</span></button>
                     <button class="btn btn-secondary" id="soundBtn" title="Activar/Desactivar sonidos">🔊</button>
-                    <button class="install-btn" id="installBtn" title="Instalar aplicación">⬇ Instalar</button>
+                    <div class="install-wrapper" id="installWrapper">
+                        <button class="install-btn" id="installBtn" title="Instalar aplicación"><span class="btn-label-desktop">⬇ Instalar</span><span class="btn-label-mobile">⬇</span></button>
+                        <button class="install-dismiss" id="installDismiss" title="Ocultar">✕</button>
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Tiempo</div>
@@ -2111,12 +2130,17 @@
         }
 
         let deferredPrompt = null;
+        const installWrapper = document.getElementById('installWrapper');
         const installBtn = document.getElementById('installBtn');
+        const installDismiss = document.getElementById('installDismiss');
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            installBtn.classList.add('visible');
+            // Solo mostrar si el usuario no lo descartó antes
+            if (!localStorage.getItem('installDismissed')) {
+                installWrapper.classList.add('visible');
+            }
         });
 
         installBtn.addEventListener('click', async () => {
@@ -2124,14 +2148,20 @@
             deferredPrompt.prompt();
             const result = await deferredPrompt.userChoice;
             if (result.outcome === 'accepted') {
-                installBtn.classList.remove('visible');
+                installWrapper.classList.remove('visible');
             }
             deferredPrompt = null;
         });
 
+        installDismiss.addEventListener('click', () => {
+            installWrapper.classList.remove('visible');
+            localStorage.setItem('installDismissed', 'true');
+        });
+
         window.addEventListener('appinstalled', () => {
-            installBtn.classList.remove('visible');
+            installWrapper.classList.remove('visible');
             deferredPrompt = null;
+            localStorage.setItem('installDismissed', 'true');
         });
 
         // Iniciar juego
