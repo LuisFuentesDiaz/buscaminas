@@ -204,11 +204,6 @@
             display: none;
         }
 
-        /* Ocultar botón de bandera en todas las plataformas */
-        #toggleFlagBtn {
-            display: none !important;
-        }
-
         /* Botón de sonido - estilos base para desktop */
         #soundBtn {
             flex: 1;
@@ -359,11 +354,6 @@
 
         .cell.flagged {
             background: var(--cell-unrevealed);
-        }
-
-        .cell.questioned {
-            background: var(--cell-unrevealed);
-            opacity: 0.85;
         }
 
         .cell.mine {
@@ -739,11 +729,6 @@
                 z-index: 200;
             }
 
-            /* Ocultar botón de bandera en móvil */
-            #toggleFlagBtn {
-                display: none;
-            }
-
             /* Ocultar botón de sonido del stats panel en móvil */
             .stats-panel #soundBtn {
                 display: none;
@@ -952,10 +937,6 @@
 
             .mobile-diff-menu {
                 z-index: 200;
-            }
-
-            #toggleFlagBtn {
-                display: none;
             }
 
             .stats-panel #soundBtn {
@@ -1298,7 +1279,6 @@
                 <div class="controls">
                     <button class="btn btn-primary" id="newGameBtn"><span class="btn-label-desktop">Nuevo Juego</span><span class="btn-label-mobile">▶</span></button>
                     <button class="btn btn-secondary" id="soundBtn" title="Activar/Desactivar sonidos">🔊</button>
-                    <button class="btn btn-secondary" id="toggleFlagBtn">🚩 Bandera</button>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Tiempo</div>
@@ -1369,13 +1349,11 @@
         let board = [];
         let revealed = [];
         let flagged = [];
-        let questioned = []; // Nuevo array para celdas con ?
         let gameOver = false;
         let gameWon = false;
         let timer = 0;
         let timerInterval = null;
         let timerStarted = false;
-        let flagMode = false;
 
         // Sistema de sonidos
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1411,7 +1389,6 @@
                 playTone(800, 0.04, 'sine', 0.1);
                 setTimeout(() => playTone(950, 0.04, 'sine', 0.08), 40);
             },
-            question: () => playTone(700, 0.08, 'triangle', 0.07),
             unflag: () => playTone(550, 0.06, 'sine', 0.06),
             win: () => {
                 playTone(523, 0.12, 'sine', 0.12); // Do
@@ -1434,7 +1411,6 @@
         const flagsCount = document.getElementById('flagsCount');
         const timerDisplay = document.getElementById('timer');
         const newGameBtn = document.getElementById('newGameBtn');
-        const toggleFlagBtn = document.getElementById('toggleFlagBtn');
         const gameModal = document.getElementById('gameModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalMessage = document.getElementById('modalMessage');
@@ -1756,16 +1732,13 @@
             board = [];
             revealed = [];
             flagged = [];
-            questioned = [];
             gameOver = false;
             gameWon = false;
             timer = 0;
             timerStarted = false;
-            flagMode = false;
             
             clearInterval(timerInterval);
             timerDisplay.textContent = '0';
-            updateFlagButton();
             
             createBoard();
             placeMines();
@@ -1780,12 +1753,10 @@
                 board[r] = [];
                 revealed[r] = [];
                 flagged[r] = [];
-                questioned[r] = [];
                 for (let c = 0; c < config.cols; c++) {
                     board[r][c] = 0;
                     revealed[r][c] = false;
                     flagged[r][c] = false;
-                    questioned[r][c] = false;
                 }
             }
         }
@@ -1849,9 +1820,6 @@
                     } else if (flagged[r][c]) {
                         cell.textContent = '🚩';
                         cell.classList.add('flagged');
-                    } else if (questioned[r][c]) {
-                        cell.textContent = '❓';
-                        cell.classList.add('questioned');
                     }
                     
                     cell.addEventListener('click', () => handleCellClick(r, c));
@@ -1889,7 +1857,6 @@
                         if (!flagged[r][c]) {
                             // Primer toque: colocar bandera
                             flagged[r][c] = true;
-                            questioned[r][c] = false;
                             sounds.flag();
                             if (navigator.vibrate) navigator.vibrate(30);
                             updateStats();
@@ -1899,7 +1866,6 @@
                         else {
                             // Segundo toque: quitar bandera y revelar
                             flagged[r][c] = false;
-                            questioned[r][c] = false;
                             handleCellClick(r, c);
                         }
                     });
@@ -1928,18 +1894,7 @@
             
             ensureTimerStarted();
             
-            if (flagMode) {
-                handleRightClick(r, c);
-                return;
-            }
-            
-            // No permitir revelar celdas con bandera, pero sí con pregunta
             if (flagged[r][c]) return;
-            
-            // Si tiene pregunta, quitarla antes de revelar
-            if (questioned[r][c]) {
-                questioned[r][c] = false;
-            }
             
             if (board[r][c] === -1) {
                 sounds.lose();
@@ -1955,25 +1910,17 @@
             checkWin();
         }
 
-        // Manejar clic derecho / long press (ciclo: vacío → bandera → pregunta → vacío)
+        // Manejar clic derecho (toggle bandera)
         function handleRightClick(r, c) {
             if (gameOver || gameWon) return;
             if (revealed[r][c]) return;
             
             ensureTimerStarted();
             
-            if (!flagged[r][c] && !questioned[r][c]) {
-                // Vacío → Bandera
-                flagged[r][c] = true;
+            flagged[r][c] = !flagged[r][c];
+            if (flagged[r][c]) {
                 sounds.flag();
-            } else if (flagged[r][c]) {
-                // Bandera → Pregunta
-                flagged[r][c] = false;
-                questioned[r][c] = true;
-                sounds.question();
-            } else if (questioned[r][c]) {
-                // Pregunta → Vacío
-                questioned[r][c] = false;
+            } else {
                 sounds.unflag();
             }
             
@@ -1985,7 +1932,7 @@
         let revealCount = 0;
         function revealCell(r, c) {
             if (r < 0 || r >= config.rows || c < 0 || c >= config.cols) return;
-            if (revealed[r][c] || flagged[r][c] || questioned[r][c]) return;
+            if (revealed[r][c] || flagged[r][c]) return;
             
             revealed[r][c] = true;
             
@@ -2087,27 +2034,11 @@
             gameModal.classList.remove('show');
         }
 
-        // Actualizar botón de bandera
-        function updateFlagButton() {
-            if (flagMode) {
-                toggleFlagBtn.style.background = 'linear-gradient(135deg, var(--accent-tertiary), #e6a500)';
-                toggleFlagBtn.style.color = 'var(--bg-primary)';
-            } else {
-                toggleFlagBtn.style.background = '';
-                toggleFlagBtn.style.color = '';
-            }
-        }
-
         // Event listeners
         newGameBtn.addEventListener('click', initGame);
         modalBtn.addEventListener('click', () => {
             hideModal();
             initGame();
-        });
-
-        toggleFlagBtn.addEventListener('click', () => {
-            flagMode = !flagMode;
-            updateFlagButton();
         });
 
         difficultyBtns.forEach(btn => {
