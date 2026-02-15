@@ -197,11 +197,11 @@
             margin-top: 12px;
         }
         .install-wrapper.visible {
-            display: flex;
+                display: flex;
         }
         .install-btn {
-            display: flex;
-            align-items: center;
+                display: flex;
+                align-items: center;
             gap: 6px;
             padding: 8px 14px;
             background: linear-gradient(135deg, var(--accent-secondary), #00c4cc);
@@ -211,7 +211,7 @@
             font-family: 'Space Mono', monospace;
             font-size: 0.75rem;
             font-weight: 700;
-            cursor: pointer;
+                cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 245, 255, 0.3);
         }
@@ -220,15 +220,15 @@
             box-shadow: 0 6px 20px rgba(0, 245, 255, 0.5);
         }
         .install-dismiss {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             padding: 8px 10px;
             background: rgba(0, 245, 255, 0.15);
             color: var(--accent-secondary);
             border: none;
             border-radius: 0 8px 8px 0;
-            font-size: 0.7rem;
+                font-size: 0.7rem;
             cursor: pointer;
         }
         .install-dismiss:hover {
@@ -280,8 +280,8 @@
         <div class="install-wrapper" id="installWrapper">
             <button class="install-btn" id="installBtn" title="Instalar aplicación">⬇ Instalar</button>
             <button class="install-dismiss" id="installDismiss" title="Ocultar">✕</button>
-        </div>
     </div>
+            </div>
 
     <div class="games-grid">
         <a href="juegos/buscaminas/index.html" class="game-card">
@@ -297,7 +297,7 @@
             <div class="game-card-desc">Juega contra la máquina con 3 niveles de dificultad. Incluye todas las reglas: enroque, en passant y promoción.</div>
             <span class="game-card-tag">Disponible</span>
         </a>
-    </div>
+            </div>
 
     <div class="footer">
         Arcade &copy; 2026
@@ -312,7 +312,7 @@
         var installBtn = document.getElementById('installBtn');
         var installDismiss = document.getElementById('installDismiss');
         window.addEventListener('beforeinstallprompt', function(e) {
-            e.preventDefault();
+                        e.preventDefault();
             installPrompt = e;
             if (!localStorage.getItem('arcadeInstallDismissed')) {
                 installWrapper.classList.add('visible');

@@ -2,8 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0a0e27">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0e27" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0a0e27" media="(prefers-color-scheme: dark)">
     <meta name="description" content="Ajedrez - Juega contra la máquina">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -139,11 +140,11 @@
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            gap: 28px;
+            gap: 24px;
             flex: 1;
             width: 100%;
-            max-width: 1200px;
-            padding: 12px 24px;
+            max-width: 1100px;
+            padding: 10px 20px;
             overflow: hidden;
             position: relative;
             z-index: 1;
@@ -153,16 +154,16 @@
         .side-panel {
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            width: 320px;
+            gap: 10px;
+            width: 260px;
             flex-shrink: 0;
         }
 
         .panel-card {
             background: var(--bg-secondary);
             border: 1px solid var(--bg-tertiary);
-            border-radius: 14px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 16px;
         }
 
         .moves-card {
@@ -175,20 +176,20 @@
 
         .panel-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             color: var(--accent-secondary);
             letter-spacing: 1px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             text-transform: uppercase;
         }
 
         /* Status */
         .status-text {
-            font-size: 1rem;
+            font-size: 0.85rem;
             color: var(--text-primary);
             text-align: center;
-            padding: 14px 12px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
             background: var(--bg-tertiary);
         }
 
@@ -205,18 +206,18 @@
         /* Difficulty */
         .diff-buttons {
             display: flex;
-            gap: 8px;
+            gap: 4px;
         }
 
         .diff-btn {
             flex: 1;
-            padding: 12px 10px;
+            padding: 8px 6px;
             background: var(--bg-tertiary);
             border: 1px solid transparent;
-            border-radius: 10px;
+            border-radius: 8px;
             color: var(--text-secondary);
             font-family: 'Space Mono', monospace;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
@@ -231,22 +232,22 @@
         /* Buttons */
         .action-buttons {
             display: flex;
-            gap: 10px;
+            gap: 6px;
         }
 
         .action-btn {
-            flex: 1;
-            padding: 14px 12px;
+            padding: 8px 12px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             font-family: 'Space Mono', monospace;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
         }
 
         .btn-new {
+            flex: 1;
             background: linear-gradient(135deg, var(--accent-primary), #d90058);
             color: white;
         }
@@ -258,6 +259,7 @@
         }
 
         .btn-undo {
+            flex: 1;
             background: var(--bg-tertiary);
             color: var(--accent-secondary);
             border: 1px solid rgba(0, 245, 255, 0.2);
@@ -267,9 +269,8 @@
             background: var(--bg-tertiary);
             color: var(--accent-secondary);
             border: 1px solid rgba(0, 245, 255, 0.2);
-            min-width: 48px;
-            padding: 14px 12px;
-            font-size: 1.2rem;
+            padding: 8px;
+            font-size: 0.9rem;
         }
         .btn-sound.muted {
             opacity: 0.5;
@@ -301,7 +302,7 @@
             flex: 1;
             min-height: 0;
             overflow-y: auto;
-            font-size: 0.95rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
             line-height: 1.8;
         }
@@ -665,7 +666,7 @@
         @media (max-width: 700px) {
             body {
                 justify-content: flex-start;
-                padding: 0;
+                padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             }
 
             .back-row { display: none; }
@@ -743,34 +744,34 @@
             .mobile-diff-row { display: flex; }
 
             .mobile-status .status-text {
-                font-size: 0.6rem;
-                padding: 1px 6px;
+                font-size: 0.7rem;
+                padding: 3px 6px;
             }
 
             .mobile-diff-row {
-                padding: 1px 10px;
-                gap: 4px;
-            }
-
-            .mobile-diff-btn {
                 padding: 3px 10px;
-                font-size: 0.6rem;
-            }
-
-            .mobile-controls {
-                padding: 1px 10px;
                 gap: 6px;
             }
 
+            .mobile-diff-btn {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+
+            .mobile-controls {
+                padding: 3px 10px;
+                gap: 8px;
+            }
+
             .mobile-controls .action-btn {
-                padding: 5px 12px;
-                font-size: 0.65rem;
+                padding: 8px 12px;
+                font-size: 0.75rem;
                 border-radius: 8px;
             }
 
             .mobile-controls .btn-new-mobile {
                 flex: 1;
-                padding: 5px 12px;
+                padding: 8px 12px;
             }
         }
 
@@ -867,16 +868,16 @@
             .mobile-controls {
                 display: flex;
                 flex-direction: column;
-                gap: 4px;
-                padding: 2px 4px;
+                gap: 6px;
+                padding: 4px 6px;
                 width: auto;
                 flex: 1;
                 min-width: 0;
             }
 
             .mobile-controls .action-btn {
-                padding: 6px;
-                font-size: 0.6rem;
+                padding: 10px 8px;
+                font-size: 0.8rem;
             }
 
             .mobile-diff-row {
@@ -886,7 +887,7 @@
                 min-width: 0;
             }
 
-            .mobile-diff-btn { font-size: 0.55rem; padding: 4px; }
+            .mobile-diff-btn { font-size: 0.7rem; padding: 6px 8px; }
         }
     </style>
 </head>
