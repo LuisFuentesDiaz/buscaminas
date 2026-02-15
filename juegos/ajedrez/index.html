@@ -675,12 +675,12 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 2px 10px;
+                padding: 5%;
                 flex-shrink: 0;
             }
 
             .header h1 {
-                font-size: 1.5rem;
+                font-size: 2.5rem;
                 white-space: nowrap;
             }
 
@@ -1822,8 +1822,12 @@
         const dx = toRect.left - fromRect.left;
         const dy = toRect.top - fromRect.top;
 
+        // Double rAF ensures the browser has painted the ghost at its
+        // initial position before we trigger the CSS transition
+        requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             ghost.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+        });
         });
 
         let done = false;
@@ -1835,7 +1839,7 @@
         }
 
         ghost.addEventListener('transitionend', finish, { once: true });
-        setTimeout(finish, 550);
+        setTimeout(finish, 600);
     }
 
     function playMoveSound(move, captured, promoed) {
