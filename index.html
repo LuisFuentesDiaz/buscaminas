@@ -110,8 +110,9 @@
             text-align: center;
             margin-bottom: 8px;
             flex-shrink: 0;
-            z-index: 1;
+            z-index: 10;
             width: 100%;
+            position: relative;
         }
 
         h1 {
@@ -489,17 +490,235 @@
             margin-bottom: 10px;
         }
 
+        /* === HEADER ICON BUTTONS (mobile only) === */
+        .header-icon-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .header-icon-btn:active {
+            transform: scale(0.9);
+        }
+
+        .header-center {
+            display: contents;
+        }
+
+        /* === MOBILE RECORDS OVERLAY === */
+        .mobile-records-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 39, 0.95);
+            z-index: 900;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s;
+        }
+
+        .mobile-records-overlay.show {
+            display: flex;
+        }
+
+        .mobile-records-content {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-tertiary);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 360px;
+            width: 100%;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            animation: modalSlide 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .mobile-records-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .mobile-records-close {
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.3rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .mobile-records-close:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .mobile-records-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .mobile-records-tab {
+            flex: 1;
+            padding: 8px 4px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mobile-records-tab.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border-color: transparent;
+        }
+
+        .mobile-records-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 0;
+        }
+
+        /* === MOBILE TOUCH HINT === */
+        .touch-hint {
+            display: none;
+            text-align: center;
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            flex-shrink: 0;
+            opacity: 0.8;
+            letter-spacing: 0.5px;
+        }
+
+        .touch-hint span {
+            color: var(--accent-secondary);
+            font-weight: 700;
+        }
+
+        /* === MOBILE DIFFICULTY DROPDOWN === */
+        .mobile-difficulty-dropdown {
+            display: none;
+            position: relative;
+        }
+
+        .mobile-diff-current {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--accent-secondary);
+            border-radius: 10px;
+            padding: 6px 12px;
+            color: var(--accent-secondary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .mobile-diff-current::after {
+            content: '▼';
+            font-size: 0.5rem;
+            transition: transform 0.2s;
+        }
+
+        .mobile-diff-current.open::after {
+            transform: rotate(180deg);
+        }
+
+        .mobile-diff-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            min-width: 120px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 100;
+            animation: fadeIn 0.2s;
+        }
+
+        .mobile-diff-menu.show {
+            display: block;
+        }
+
+        .mobile-diff-option {
+            padding: 10px 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mobile-diff-option:hover,
+        .mobile-diff-option.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+        }
+
+        .mobile-diff-option + .mobile-diff-option {
+            border-top: 1px solid var(--bg-tertiary);
+        }
+
         @media (max-width: 480px) {
             body {
-                padding: 5px;
+                padding: 0;
                 justify-content: flex-start;
-                padding-top: 5px;
                 overflow: hidden;
             }
 
             .main-wrapper {
                 flex: 1;
                 min-height: 0;
+                padding: 6px;
+                padding-bottom: 0;
             }
 
             .container {
@@ -510,14 +729,57 @@
                 flex-direction: column;
             }
 
-            /* Ocultar header completo en móvil */
+            /* Header compacto en móvil */
             .header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                margin-bottom: 4px;
+                padding: 8px 10px 0;
+                flex-shrink: 0;
+                z-index: 50;
+            }
+
+            .header-center {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .header-icon-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 36px;
+                height: 36px;
+                background: var(--bg-tertiary);
+                border-radius: 10px;
+                font-size: 1rem;
+            }
+
+            h1 {
+                font-size: 1.1rem;
+                margin-bottom: 0;
+                letter-spacing: 1px;
+            }
+
+            .subtitle {
                 display: none;
             }
 
-            /* Ocultar selector de dificultad en móvil */
+            /* Selector de dificultad como dropdown en móvil */
             .difficulty-selector {
                 display: none;
+            }
+
+            .mobile-difficulty-dropdown {
+                display: block;
+                z-index: 100;
+            }
+
+            .mobile-diff-menu {
+                z-index: 200;
             }
 
             /* Ocultar botón de bandera en móvil */
@@ -525,37 +787,13 @@
                 display: none;
             }
 
-            /* Botón de sonido flotante en móvil */
-            #soundBtn {
-                display: flex;
-                min-width: 50px;
-                padding: 8px;
-                font-size: 1.5rem;
-                border-radius: 50%;
-                width: 50px;
-                height: 50px;
-                align-items: center;
-                justify-content: center;
-                position: absolute;
-                right: 10px;
-                bottom: 10px;
-                z-index: 10;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-                background: var(--bg-secondary);
-                border: 2px solid var(--accent-secondary);
-                color: var(--accent-secondary);
-                cursor: pointer;
-                flex: none;
-            }
-
-            #soundBtn.muted {
-                opacity: 0.5;
-                border-color: var(--text-secondary);
-                color: var(--text-secondary);
+            /* Ocultar botón de sonido del stats panel en móvil */
+            .stats-panel #soundBtn {
+                display: none;
             }
 
             .install-prompt {
-                margin-bottom: 8px;
+                margin-bottom: 6px;
                 padding: 8px;
                 flex-shrink: 0;
             }
@@ -565,27 +803,28 @@
                 margin-bottom: 6px;
             }
 
-            /* Reorganizar stats y botón en grid horizontal */
+            /* Stats panel: barra horizontal compacta */
             .stats-panel {
-                display: grid;
-                grid-template-columns: 1fr 1fr auto 1fr;
+                display: flex;
                 gap: 6px;
-                margin-bottom: 10px;
-                align-items: center;
+                margin-bottom: 6px;
+                align-items: stretch;
                 flex-shrink: 0;
+                flex-wrap: nowrap;
             }
 
-            /* Stats: Minas y Banderas a la izquierda */
             .stat-card {
-                min-width: auto;
-                padding: 4px 6px;
-                border-radius: 6px;
-                flex: none;
+                flex: 1;
+                min-width: 0;
+                padding: 6px 4px;
+                border-radius: 8px;
+                flex-direction: row;
+                gap: 6px;
+                justify-content: center;
             }
 
-            .stat-card:nth-child(1),
-            .stat-card:nth-child(2) {
-                grid-row: 1;
+            .stat-card::before {
+                display: none;
             }
 
             .stat-label {
@@ -594,53 +833,52 @@
             }
 
             .stat-value {
-                font-size: 0.8rem;
+                font-size: 0.9rem;
             }
 
-            /* Botón nuevo juego circular en el centro */
+            /* Botón nuevo juego compacto en la barra de stats */
             .controls {
-                grid-column: 3;
-                grid-row: 1;
+                flex: 0 0 auto;
                 margin: 0;
-                padding: 0 8px;
+                padding: 0;
                 display: flex;
                 justify-content: center;
-                flex: none;
+                align-items: center;
             }
 
             #newGameBtn {
-                width: 56px;
-                height: 56px;
+                width: 44px;
+                height: 44px;
                 border-radius: 50%;
                 padding: 0;
-                font-size: 1.4rem;
+                font-size: 1.2rem;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 flex-shrink: 0;
-                box-shadow: 0 4px 20px rgba(255, 0, 110, 0.5);
+                box-shadow: 0 4px 16px rgba(255, 0, 110, 0.5);
                 min-width: auto;
             }
 
-            /* Timer a la derecha */
-            .stat-card:nth-child(4) {
-                grid-column: 4;
-                grid-row: 1;
+            /* Touch hint visible en móvil */
+            .touch-hint {
+                display: block;
             }
 
             .game-board {
-                padding: 3px;
+                padding: 4px;
                 margin-bottom: 0;
                 border-width: 2px;
                 flex: 1;
                 display: flex;
                 flex-direction: column;
                 min-height: 0;
+                border-radius: 12px;
             }
 
             .grid {
-                gap: 3px;
-                padding: 3px;
+                gap: 2px;
+                padding: 2px;
                 flex: 1;
                 display: grid;
                 align-content: stretch;
@@ -652,47 +890,97 @@
             }
 
             .cell {
-                border-radius: 6px;
-                font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+                border-radius: 5px;
+                font-size: clamp(0.9rem, 3.2vw, 1.4rem);
                 min-width: 0;
                 min-height: 0;
                 width: 100%;
                 height: 100%;
+                transition: transform 0.1s, background 0.15s;
+            }
+
+            .cell:active:not(.revealed) {
+                transform: scale(0.92);
+                background: var(--cell-hover);
             }
 
             .modal-content {
-                padding: 20px;
+                padding: 24px 20px;
+                margin: 0 10px;
+                border-radius: 16px;
             }
 
             .modal-title {
-                font-size: 1.5rem;
+                font-size: 1.6rem;
             }
 
             .modal-message {
-                font-size: 0.95rem;
+                font-size: 1rem;
                 margin-bottom: 20px;
+            }
+
+            .modal .btn-primary {
+                padding: 14px;
+                font-size: 0.9rem;
+                border-radius: 12px;
             }
         }
 
         /* Modo landscape en móviles */
         @media (max-width: 900px) and (orientation: landscape) {
             body {
-                padding: 5px;
+                padding: 0;
                 overflow: hidden;
             }
 
             .main-wrapper {
                 flex: 1;
                 min-height: 0;
+                padding: 4px;
+                flex-direction: row;
             }
 
             .container {
                 height: 100%;
                 display: flex;
                 flex-direction: column;
+                flex: 1;
             }
 
             .header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 6px;
+                margin-bottom: 3px;
+                padding: 2px 6px 0;
+                flex-shrink: 0;
+                z-index: 50;
+            }
+
+            .header-center {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .header-icon-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 30px;
+                height: 30px;
+                background: var(--bg-tertiary);
+                border-radius: 8px;
+                font-size: 0.85rem;
+            }
+
+            h1 {
+                font-size: 0.85rem;
+                margin-bottom: 0;
+            }
+
+            .subtitle {
                 display: none;
             }
 
@@ -700,40 +988,43 @@
                 display: none;
             }
 
+            .mobile-difficulty-dropdown {
+                display: block;
+                z-index: 100;
+            }
+
+            .mobile-diff-menu {
+                z-index: 200;
+            }
+
             #toggleFlagBtn {
                 display: none;
             }
 
-            #soundBtn {
-                display: flex;
-                min-width: 45px;
-                padding: 6px;
-                font-size: 1.3rem;
-                border-radius: 50%;
-                width: 45px;
-                height: 45px;
-                align-items: center;
-                justify-content: center;
-                position: absolute;
-                right: 8px;
-                bottom: 8px;
-                z-index: 10;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            .stats-panel #soundBtn {
+                display: none;
             }
 
             .stats-panel {
-                display: grid;
-                grid-template-columns: 1fr 1fr auto 1fr;
-                gap: 6px;
-                margin-bottom: 8px;
-                align-items: center;
+                display: flex;
+                gap: 4px;
+                margin-bottom: 4px;
+                align-items: stretch;
                 flex-shrink: 0;
+                flex-wrap: nowrap;
             }
 
             .stat-card {
+                flex: 1;
                 padding: 3px 5px;
-                min-width: auto;
-                flex: none;
+                min-width: 0;
+                flex-direction: row;
+                gap: 4px;
+                justify-content: center;
+            }
+
+            .stat-card::before {
+                display: none;
             }
 
             .stat-label {
@@ -745,36 +1036,42 @@
             }
 
             .controls {
-                grid-column: 3;
-                grid-row: 1;
+                flex: 0 0 auto;
                 margin: 0;
-                padding: 0 6px;
-                flex: none;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
 
             #newGameBtn {
-                width: 48px;
-                height: 48px;
+                width: 36px;
+                height: 36px;
                 border-radius: 50%;
                 padding: 0;
-                font-size: 1.2rem;
+                font-size: 1rem;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                min-width: auto;
             }
 
-            .stat-card:nth-child(4) {
-                grid-column: 4;
-                grid-row: 1;
+            .touch-hint {
+                display: block;
+                margin-bottom: 3px;
+                font-size: 0.5rem;
+                padding: 2px 6px;
             }
 
             .game-board {
                 margin-bottom: 0;
-                padding: 5px;
+                padding: 3px;
                 flex: 1;
                 display: flex;
                 flex-direction: column;
                 min-height: 0;
+                border-radius: 10px;
+                border-width: 2px;
             }
 
             .grid {
@@ -789,10 +1086,14 @@
             }
 
             .cell {
-                font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+                font-size: clamp(0.7rem, 2vw, 1rem);
                 border-radius: 3px;
                 min-width: 0;
                 min-height: 0;
+            }
+
+            .cell:active:not(.revealed) {
+                transform: scale(0.92);
             }
 
             .install-prompt {
@@ -968,7 +1269,7 @@
             100% { background: var(--bg-tertiary); transform: scale(1); }
         }
 
-        /* Ocultar panel de records en móvil */
+        /* Ocultar panel de records en móvil (se accede desde bottom bar) */
         @media (max-width: 480px) {
             .records-panel {
                 display: none;
@@ -1001,8 +1302,20 @@
 </head>
 <body>
     <div class="header">
-        <h1>💣 Minas</h1>
-        <div class="subtitle">Buscaminas</div>
+        <button class="header-icon-btn" id="mobileRecordsBtn" title="Records">🏆</button>
+        <div class="header-center">
+            <h1>💣 Minas</h1>
+            <div class="subtitle">Buscaminas</div>
+            <div class="mobile-difficulty-dropdown" id="mobileDiffDropdown">
+                <button class="mobile-diff-current" id="mobileDiffCurrent">Fácil</button>
+                <div class="mobile-diff-menu" id="mobileDiffMenu">
+                    <button class="mobile-diff-option active" data-difficulty="easy">Fácil</button>
+                    <button class="mobile-diff-option" data-difficulty="medium">Medio</button>
+                    <button class="mobile-diff-option" data-difficulty="hard">Difícil</button>
+                </div>
+            </div>
+        </div>
+        <button class="header-icon-btn" id="mobileSoundBtn" title="Sonido"><span id="mobileSoundIcon">🔊</span></button>
     </div>
 
     <div class="main-wrapper">
@@ -1038,6 +1351,10 @@
                 <button class="difficulty-btn" data-difficulty="hard">Difícil</button>
             </div>
 
+            <div class="touch-hint">
+                Toca = <span>🚩 bandera</span> · Toca bandera = <span>revelar</span>
+            </div>
+
             <div class="game-board">
                 <div class="grid" id="gameGrid"></div>
             </div>
@@ -1051,6 +1368,22 @@
                 <button class="records-tab" data-records-diff="hard">Difícil</button>
             </div>
             <div class="records-list" id="recordsList"></div>
+        </div>
+    </div>
+
+    <!-- Overlay de records para móvil -->
+    <div class="mobile-records-overlay" id="mobileRecordsOverlay">
+        <div class="mobile-records-content">
+            <div class="mobile-records-header">
+                <div class="records-title" style="margin-bottom:0">🏆 Top 10</div>
+                <button class="mobile-records-close" id="mobileRecordsClose">✕</button>
+            </div>
+            <div class="mobile-records-tabs">
+                <button class="mobile-records-tab active" data-records-diff="easy">Fácil</button>
+                <button class="mobile-records-tab" data-records-diff="medium">Medio</button>
+                <button class="mobile-records-tab" data-records-diff="hard">Difícil</button>
+            </div>
+            <div class="mobile-records-list" id="mobileRecordsList"></div>
         </div>
     </div>
 
@@ -1195,6 +1528,7 @@
                 
                 db.close();
                 renderRecords(currentRecordsView, time);
+                renderMobileRecords(currentRecordsView, time);
             } catch (err) {
                 console.error('Error guardando record:', err);
             }
@@ -1326,6 +1660,133 @@
             if (soundsEnabled) {
                 sounds.click();
             }
+        });
+
+        // === MOBILE UI ELEMENTS ===
+        const mobileSoundBtn = document.getElementById('mobileSoundBtn');
+        const mobileRecordsBtn = document.getElementById('mobileRecordsBtn');
+        const mobileRecordsOverlay = document.getElementById('mobileRecordsOverlay');
+        const mobileRecordsClose = document.getElementById('mobileRecordsClose');
+        const mobileRecordsList = document.getElementById('mobileRecordsList');
+        const mobileRecordsTabs = document.querySelectorAll('.mobile-records-tab');
+        const mobileDiffCurrent = document.getElementById('mobileDiffCurrent');
+        const mobileDiffMenu = document.getElementById('mobileDiffMenu');
+        const mobileDiffOptions = document.querySelectorAll('.mobile-diff-option');
+
+        // Mobile sound toggle
+        const mobileSoundIcon = document.getElementById('mobileSoundIcon');
+        mobileSoundBtn.addEventListener('click', () => {
+            soundsEnabled = !soundsEnabled;
+            mobileSoundIcon.textContent = soundsEnabled ? '🔊' : '🔇';
+            soundBtn.textContent = soundsEnabled ? '🔊' : '🔇';
+            soundBtn.classList.toggle('muted', !soundsEnabled);
+            mobileSoundBtn.style.opacity = soundsEnabled ? '1' : '0.5';
+            if (soundsEnabled) {
+                sounds.click();
+            }
+        });
+
+        // Mobile records overlay
+        mobileRecordsBtn.addEventListener('click', () => {
+            mobileRecordsOverlay.classList.add('show');
+            renderMobileRecords(currentRecordsView);
+        });
+
+        mobileRecordsClose.addEventListener('click', () => {
+            mobileRecordsOverlay.classList.remove('show');
+        });
+
+        mobileRecordsOverlay.addEventListener('click', (e) => {
+            if (e.target === mobileRecordsOverlay) {
+                mobileRecordsOverlay.classList.remove('show');
+            }
+        });
+
+        // Mobile records tabs
+        mobileRecordsTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                mobileRecordsTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                renderMobileRecords(tab.dataset.recordsDiff);
+            });
+        });
+
+        // Render records in mobile overlay
+        async function renderMobileRecords(difficulty, highlightTime = null) {
+            const records = await getRecords(difficulty);
+            mobileRecordsList.innerHTML = '';
+            
+            if (records.length === 0) {
+                mobileRecordsList.innerHTML = '<div class="record-empty">Sin records aún.<br>¡Gana una partida!</div>';
+                return;
+            }
+            
+            records.forEach((rec, i) => {
+                const item = document.createElement('div');
+                item.className = 'record-item';
+                
+                if (i === 0) item.classList.add('gold');
+                else if (i === 1) item.classList.add('silver');
+                else if (i === 2) item.classList.add('bronze');
+                
+                if (highlightTime !== null && rec.time === highlightTime) {
+                    item.classList.add('record-new');
+                    highlightTime = null;
+                }
+                
+                const date = new Date(rec.date);
+                const dateStr = date.toLocaleDateString('es-ES', { 
+                    day: '2-digit', month: 'short', year: '2-digit' 
+                });
+                const timeStr = date.toLocaleTimeString('es-ES', { 
+                    hour: '2-digit', minute: '2-digit' 
+                });
+                
+                item.innerHTML = `
+                    <div class="record-rank">${i + 1}</div>
+                    <div class="record-info">
+                        <div class="record-time">${rec.time}s</div>
+                        <div class="record-date">${dateStr} ${timeStr}</div>
+                    </div>
+                `;
+                
+                mobileRecordsList.appendChild(item);
+            });
+        }
+
+        // Mobile difficulty dropdown
+        const diffLabels = { easy: 'Fácil', medium: 'Medio', hard: 'Difícil' };
+
+        mobileDiffCurrent.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mobileDiffMenu.classList.toggle('show');
+            mobileDiffCurrent.classList.toggle('open');
+        });
+
+        mobileDiffOptions.forEach(opt => {
+            opt.addEventListener('click', () => {
+                const diff = opt.dataset.difficulty;
+                mobileDiffOptions.forEach(o => o.classList.remove('active'));
+                opt.classList.add('active');
+                mobileDiffCurrent.textContent = diffLabels[diff];
+                mobileDiffMenu.classList.remove('show');
+                mobileDiffCurrent.classList.remove('open');
+                
+                // Sync with main difficulty buttons
+                currentDifficulty = diff;
+                difficultyBtns.forEach(b => b.classList.toggle('active', b.dataset.difficulty === diff));
+                initGame();
+                
+                currentRecordsView = diff;
+                recordsTabs.forEach(t => t.classList.toggle('active', t.dataset.recordsDiff === diff));
+                renderRecords(currentRecordsView);
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            mobileDiffMenu.classList.remove('show');
+            mobileDiffCurrent.classList.remove('open');
         });
 
         // Función para calcular el tamaño óptimo del tablero según la pantalla
@@ -1699,6 +2160,10 @@
                     t.classList.toggle('active', t.dataset.recordsDiff === currentDifficulty);
                 });
                 renderRecords(currentRecordsView);
+                
+                // Sincronizar dropdown móvil
+                mobileDiffCurrent.textContent = diffLabels[currentDifficulty];
+                mobileDiffOptions.forEach(o => o.classList.toggle('active', o.dataset.difficulty === currentDifficulty));
             });
         });
 
