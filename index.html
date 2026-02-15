@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a0e27">
     <meta name="description" content="Buscaminas - Juego clásico con diseño moderno">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Buscaminas">
+    <link rel="manifest" href="manifest.json">
     <title>💣 Buscaminas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -260,6 +264,34 @@
             background: var(--bg-secondary);
             color: var(--accent-secondary);
             border: 2px solid var(--accent-secondary);
+        }
+
+        /* Botón de instalación PWA */
+        .install-btn {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, var(--accent-secondary), #00c4cc);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 245, 255, 0.3);
+            white-space: nowrap;
+        }
+
+        .install-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 245, 255, 0.5);
+        }
+
+        .install-btn.visible {
+            display: flex;
         }
 
         .difficulty-selector {
@@ -729,6 +761,12 @@
                 z-index: 200;
             }
 
+            /* Ocultar botón de instalación en móvil */
+            .install-btn,
+            .install-btn.visible {
+                display: none !important;
+            }
+
             /* Ocultar botón de sonido del stats panel en móvil */
             .stats-panel #soundBtn {
                 display: none;
@@ -937,6 +975,11 @@
 
             .mobile-diff-menu {
                 z-index: 200;
+            }
+
+            .install-btn,
+            .install-btn.visible {
+                display: none !important;
             }
 
             .stats-panel #soundBtn {
@@ -1279,6 +1322,7 @@
                 <div class="controls">
                     <button class="btn btn-primary" id="newGameBtn"><span class="btn-label-desktop">Nuevo Juego</span><span class="btn-label-mobile">▶</span></button>
                     <button class="btn btn-secondary" id="soundBtn" title="Activar/Desactivar sonidos">🔊</button>
+                    <button class="install-btn" id="installBtn" title="Instalar aplicación">⬇ Instalar</button>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Tiempo</div>
@@ -2059,6 +2103,35 @@
                 mobileDiffCurrent.textContent = diffLabels[currentDifficulty];
                 mobileDiffOptions.forEach(o => o.classList.toggle('active', o.dataset.difficulty === currentDifficulty));
             });
+        });
+
+        // === PWA: Service Worker + Instalación ===
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
+
+        let deferredPrompt = null;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.classList.add('visible');
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const result = await deferredPrompt.userChoice;
+            if (result.outcome === 'accepted') {
+                installBtn.classList.remove('visible');
+            }
+            deferredPrompt = null;
+        });
+
+        window.addEventListener('appinstalled', () => {
+            installBtn.classList.remove('visible');
+            deferredPrompt = null;
         });
 
         // Iniciar juego
