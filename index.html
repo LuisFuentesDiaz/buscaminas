@@ -1356,7 +1356,7 @@
             </div>
 
             <div class="touch-hint">
-                Toca = <span>🚩 bandera</span> · Toca bandera = <span>revelar</span>
+                Toca = <span>revelar</span> · Mantén 1s = <span>🚩 bandera</span>
             </div>
 
             <div class="game-board">
@@ -1891,50 +1891,61 @@
                         handleRightClick(r, c);
                     });
                     
-                    // Sistema táctil simplificado para móviles - 2 toques
+                    // Sistema táctil: toque corto = revelar, mantener 1s = bandera
                     let touchMoved = false;
+                    let longPressTimer = null;
+                    let longPressTriggered = false;
                     
-                    cell.addEventListener('touchstart', () => {
+                    cell.addEventListener('touchstart', (e) => {
                         touchMoved = false;
+                        longPressTriggered = false;
+                        
+                        longPressTimer = setTimeout(() => {
+                            longPressTriggered = true;
+                            
+                            if (gameOver || gameWon) return;
+                            if (revealed[r][c]) return;
+                            
+                            ensureTimerStarted();
+                            
+                            // Toggle bandera
+                            flagged[r][c] = !flagged[r][c];
+                            if (flagged[r][c]) {
+                                sounds.flag();
+                            } else {
+                                sounds.unflag();
+                            }
+                            if (navigator.vibrate) navigator.vibrate(50);
+                            updateStats();
+                            renderBoard();
+                        }, 1000);
                     }, { passive: true });
                     
-                    cell.addEventListener('touchmove', (e) => {
+                    cell.addEventListener('touchmove', () => {
                         touchMoved = true;
+                        clearTimeout(longPressTimer);
                     }, { passive: true });
                     
                     cell.addEventListener('touchend', (e) => {
+                        clearTimeout(longPressTimer);
                         e.preventDefault();
                         
-                        // Si se movió el dedo, ignorar
-                        if (touchMoved) return;
+                        // Si se movió el dedo o ya se colocó bandera, no hacer nada
+                        if (touchMoved || longPressTriggered) return;
                         
-                        // Si el juego terminó, ignorar
+                        // Toque corto: revelar celda
                         if (gameOver || gameWon) return;
-                        
-                        // Si ya está revelada, ignorar
                         if (revealed[r][c]) return;
+                        if (flagged[r][c]) return; // No revelar celdas con bandera
                         
                         ensureTimerStarted();
-                        
-                        // Si NO tiene bandera (vacía)
-                        if (!flagged[r][c]) {
-                            // Primer toque: colocar bandera
-                            flagged[r][c] = true;
-                            sounds.flag();
-                            if (navigator.vibrate) navigator.vibrate(30);
-                            updateStats();
-                            renderBoard();
-                        } 
-                        // Si tiene bandera
-                        else {
-                            // Segundo toque: quitar bandera y revelar
-                            flagged[r][c] = false;
-                            handleCellClick(r, c);
-                        }
+                        handleCellClick(r, c);
                     });
                     
                     cell.addEventListener('touchcancel', () => {
+                        clearTimeout(longPressTimer);
                         touchMoved = false;
+                        longPressTriggered = false;
                     });
                     
                     gameGrid.appendChild(cell);
