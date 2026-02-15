@@ -88,7 +88,7 @@
             width: 100%;
             flex: 1;
             min-height: 0;
-            z-index: 10;
+            z-index: 1;
             animation: slideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
             display: flex;
             flex-direction: column;
@@ -110,7 +110,7 @@
             text-align: center;
             margin-bottom: 8px;
             flex-shrink: 0;
-            z-index: 1;
+            z-index: 10;
             width: 100%;
             position: relative;
         }
@@ -180,13 +180,7 @@
         @keyframes scan {
             to { left: 100%; }
         }
-
-        .stat-card:hover {
-            border-color: var(--accent-secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 245, 255, 0.2);
-        }
-
+        
         .stat-label {
             font-size: 0.7rem;
             color: var(--text-secondary);
@@ -271,11 +265,6 @@
             background: linear-gradient(135deg, var(--accent-primary), #d90058);
             color: white;
             box-shadow: 0 4px 15px rgba(255, 0, 110, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 0, 110, 0.6);
         }
 
         .btn-secondary {
@@ -747,7 +736,7 @@
                 margin-bottom: 4px;
                 padding: 8px 10px 0;
                 flex-shrink: 0;
-                z-index: 2;
+                z-index: 50;
             }
 
             .header-center {
@@ -784,15 +773,11 @@
 
             .mobile-difficulty-dropdown {
                 display: block;
+                z-index: 100;
             }
 
             .mobile-diff-menu {
-                position: fixed;
-                left: 50%;
-                transform: translateX(-50%);
-                top: auto;
-                min-width: 140px;
-                z-index: 500;
+                z-index: 200;
             }
 
             /* Ocultar botón de bandera en móvil */
@@ -979,7 +964,7 @@
                 margin-bottom: 3px;
                 padding: 2px 6px 0;
                 flex-shrink: 0;
-                z-index: 2;
+                z-index: 50;
             }
 
             .header-center {
@@ -1014,15 +999,11 @@
 
             .mobile-difficulty-dropdown {
                 display: block;
+                z-index: 100;
             }
 
             .mobile-diff-menu {
-                position: fixed;
-                left: 50%;
-                transform: translateX(-50%);
-                top: auto;
-                min-width: 140px;
-                z-index: 500;
+                z-index: 200;
             }
 
             #toggleFlagBtn {
