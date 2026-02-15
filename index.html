@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a0e27">
     <meta name="description" content="Buscaminas - Juego clásico con diseño moderno">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Buscaminas">
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkJ1c2NhbWluYXMiLAogICJzaG9ydF9uYW1lIjogIk1pbmVzIiwKICAiZGVzY3JpcHRpb24iOiAiSnVlZ28gY2zDoXNpY28gZGVsIEJ1c2NhbWluYXMiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBhMGUyNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwYTBlMjciLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnJTNFJTNDcmVjdCBmaWxsPSclMjMwYTBlMjcnIHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJy8lM0UlM0N0ZXh0IHg9JzUwJyB5PSc3MCcgZm9udC1zaXplPSc2MCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nJTIzZmYwMDZlJyUzRSTwn5qpJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnJTNFJTNDcmVjdCBmaWxsPSclMjMwYTBlMjcnIHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJy8lM0UlM0N0ZXh0IHg9JzUwJyB5PSc3MCcgZm9udC1zaXplPSc2MCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nJTIzZmYwMDZlJyUzRSTwn5qpJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
     <title>💣 Buscaminas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,9 +22,7 @@
             --cell-unrevealed: #2a3f5f;
             --cell-revealed: #151b3d;
             --cell-hover: #3d5a80;
-            --border-glow: rgba(0, 245, 255, 0.3);
             --mine-color: #ff006e;
-            --flag-color: #ffbe0b;
         }
 
         * {
@@ -273,11 +267,6 @@
             border: 2px solid var(--accent-secondary);
         }
 
-        .btn-secondary:hover {
-            background: var(--accent-secondary);
-            color: var(--bg-primary);
-        }
-
         .difficulty-selector {
             display: flex;
             gap: 6px;
@@ -456,37 +445,6 @@
             color: var(--text-secondary);
         }
 
-        .install-prompt {
-            background: var(--bg-secondary);
-            border: 2px solid var(--accent-secondary);
-            border-radius: 12px;
-            padding: 10px;
-            margin-bottom: 8px;
-            display: none;
-            animation: slideDown 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-            flex-shrink: 0;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .install-prompt.show {
-            display: block;
-        }
-
-        .install-text {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
 
         /* === HEADER ICON BUTTONS (mobile only) === */
         .header-icon-btn {
@@ -789,17 +747,6 @@
             /* Ocultar botón de sonido del stats panel en móvil */
             .stats-panel #soundBtn {
                 display: none;
-            }
-
-            .install-prompt {
-                margin-bottom: 6px;
-                padding: 8px;
-                flex-shrink: 0;
-            }
-
-            .install-text {
-                font-size: 0.7rem;
-                margin-bottom: 6px;
             }
 
             /* Stats panel: barra horizontal compacta */
@@ -1118,9 +1065,6 @@
                 transform: scale(0.92);
             }
 
-            .install-prompt {
-                flex-shrink: 0;
-            }
         }
 
         @media (hover: none) {
@@ -1342,11 +1286,6 @@
 
     <div class="main-wrapper">
         <div class="container">
-            <div class="install-prompt" id="installPrompt">
-                <div class="install-text">📱 Instala esta app en tu dispositivo</div>
-                <button class="btn btn-primary" id="installBtn">Instalar App</button>
-            </div>
-
             <div class="stats-panel">
                 <div class="stat-card">
                     <div class="stat-label">Minas</div>
@@ -1437,7 +1376,6 @@
         let timerInterval = null;
         let timerStarted = false;
         let flagMode = false;
-        let isMobile = window.innerWidth <= 480;
 
         // Sistema de sonidos
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1812,15 +1750,9 @@
             mobileDiffCurrent.classList.remove('open');
         });
 
-        // Función para calcular el tamaño óptimo del tablero según la pantalla
-        function calculateOptimalGridSize() {
-            // Usar la configuración predefinida de dificultad
-            return difficulties[currentDifficulty];
-        }
-
         // Inicializar juego
         function initGame() {
-            config = calculateOptimalGridSize();
+            config = difficulties[currentDifficulty];
             board = [];
             revealed = [];
             flagged = [];
@@ -1929,12 +1861,10 @@
                     });
                     
                     // Sistema táctil simplificado para móviles - 2 toques
-                    let touchStartTime;
                     let touchMoved = false;
                     
-                    cell.addEventListener('touchstart', (e) => {
+                    cell.addEventListener('touchstart', () => {
                         touchMoved = false;
-                        touchStartTime = Date.now();
                     }, { passive: true });
                     
                     cell.addEventListener('touchmove', (e) => {
@@ -2200,58 +2130,8 @@
             });
         });
 
-        // PWA Installation
-        let deferredPrompt;
-        const installPrompt = document.getElementById('installPrompt');
-        const installBtn = document.getElementById('installBtn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installPrompt.classList.add('show');
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            
-            if (outcome === 'accepted') {
-                installPrompt.classList.remove('show');
-            }
-            
-            deferredPrompt = null;
-        });
-
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVfTkFNRSA9ICdtaW5lc3dlZXBlci12MSc7CmNvbnN0IHVybHNUb0NhY2hlID0gWycvJ107CnNlbGYuYWRkRXZlbnRMaXN0ZW5lcignaW5zdGFsbCcsIGUgPT4gZS53YWl0VW50aWwoY2FjaGVzLm9wZW4oQ0FDSEVfTkFNRSkudGhlbihjID0+IGMuYWRkQWxsKHVybHNUb0NhY2hlKSkpKTsKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGUgPT4gZS5yZXNwb25kV2l0aChjYWNoZXMubWF0Y2goZS5yZXF1ZXN0KS50aGVuKHIgPT4gciB8fCBmZXRjaChlLnJlcXVlc3QpKSkpOw==');
-        }
-
         // Iniciar juego
         initGame();
-
-        // Recalcular tamaño cuando cambia la orientación o el tamaño de ventana
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                const wasMobile = isMobile;
-                isMobile = window.innerWidth <= 480;
-                
-                // Solo reiniciar si cambió entre móvil y desktop
-                if (wasMobile !== isMobile) {
-                    initGame();
-                }
-            }, 300);
-        });
-
-        window.addEventListener('orientationchange', () => {
-            setTimeout(() => {
-                initGame();
-            }, 300);
-        });
     </script>
 </body>
 </html>
