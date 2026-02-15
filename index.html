@@ -716,7 +716,7 @@
                 flex: 1;
                 min-height: 0;
                 padding: 6px;
-                padding-bottom: 0;
+                padding-bottom: 6px;
             }
 
             .container {
@@ -757,9 +757,10 @@
             }
 
             h1 {
-                font-size: 1.1rem;
+                font-size: 0.85rem;
                 margin-bottom: 0;
                 letter-spacing: 1px;
+                white-space: nowrap;
             }
 
             .subtitle {
@@ -1325,7 +1326,7 @@
     <div class="header">
         <button class="header-icon-btn" id="mobileRecordsBtn" title="Records">🏆</button>
         <div class="header-center">
-            <h1>💣 Minas</h1>
+            <h1>💣 Busca Minas</h1>
             <div class="subtitle">Buscaminas</div>
             <div class="mobile-difficulty-dropdown" id="mobileDiffDropdown">
                 <button class="mobile-diff-current" id="mobileDiffCurrent">Fácil</button>
@@ -1419,9 +1420,9 @@
     <script>
         // Configuración del juego
         const difficulties = {
-            easy: { rows: 8, cols: 6, mines: 10 },      // 22% (antes 10)
-            medium: { rows: 10, cols: 8, mines: 25 },  // 26% (antes 25)
-            hard: { rows: 12, cols: 10, mines: 37 }     // ~19.5%
+            easy: { rows: 8, cols: 6, mines: 10 },     
+            medium: { rows: 10, cols: 8, mines: 20 }, 
+            hard: { rows: 12, cols: 10, mines: 25 }     
         };
 
         let currentDifficulty = 'easy';
