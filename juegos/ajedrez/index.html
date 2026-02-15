@@ -251,6 +251,12 @@
             color: white;
         }
 
+        .btn-new-mobile {
+            background: linear-gradient(135deg, var(--accent-primary), #d90058);
+            color: white;
+            font-weight: 700;
+        }
+
         .btn-undo {
             background: var(--bg-tertiary);
             color: var(--accent-secondary);
@@ -674,7 +680,7 @@
             }
 
             .header h1 {
-                font-size: 0.9rem;
+                font-size: 1.5rem;
                 white-space: nowrap;
             }
 
@@ -682,10 +688,11 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                width: 30px;
-                height: 30px;
+                width: 28px;
+                height: 28px;
                 background: var(--bg-tertiary);
                 border-radius: 8px;
+                font-size: 0.8rem;
             }
 
             .game-layout {
@@ -703,12 +710,12 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 1px;
+                gap: 0;
                 padding: 0 4px;
             }
 
             .board {
-                --board-size: min(98vw, calc(100dvh - 140px));
+                --board-size: min(98vw, calc(100dvh - 120px));
                 width: var(--board-size);
                 height: var(--board-size);
             }
@@ -720,23 +727,23 @@
             .player-bar {
                 width: var(--board-size, 98vw);
                 font-size: 0.6rem;
-                padding: 2px 6px;
+                padding: 1px 6px;
                 gap: 4px;
             }
 
             .player-name { font-size: 0.6rem; }
             .player-indicator { width: 7px; height: 7px; }
-            .captured { font-size: 0.8rem; min-height: 14px; }
-            .score-diff { font-size: 0.65rem; }
+            .captured { font-size: 0.75rem; min-height: 12px; }
+            .score-diff { font-size: 0.6rem; }
 
-            .coord-file, .coord-rank { font-size: 0.4rem; }
+            .coord-file, .coord-rank { font-size: 0.35rem; }
 
             .mobile-status { display: block; }
             .mobile-controls { display: flex; }
             .mobile-diff-row { display: flex; }
 
             .mobile-status .status-text {
-                font-size: 0.65rem;
+                font-size: 0.6rem;
                 padding: 1px 6px;
             }
 
@@ -745,14 +752,25 @@
                 gap: 4px;
             }
 
+            .mobile-diff-btn {
+                padding: 3px 10px;
+                font-size: 0.6rem;
+            }
+
             .mobile-controls {
                 padding: 1px 10px;
+                gap: 6px;
             }
 
             .mobile-controls .action-btn {
-                padding: 4px 8px;
+                padding: 5px 12px;
                 font-size: 0.65rem;
-                border-radius: 6px;
+                border-radius: 8px;
+            }
+
+            .mobile-controls .btn-new-mobile {
+                flex: 1;
+                padding: 5px 12px;
             }
         }
 
@@ -880,7 +898,7 @@
     <div class="header">
         <a href="../../index.html" class="header-icon-btn back-btn-mobile">←</a>
         <h1>♟ Ajedrez</h1>
-        <button class="header-icon-btn" id="mobileNewGame" title="Nueva partida">🔄</button>
+        <div style="width:28px"></div>
     </div>
 
     <!-- Mobile controls (arriba del tablero) -->
@@ -893,6 +911,7 @@
         <button class="mobile-diff-btn" data-depth="4">Difícil</button>
     </div>
     <div class="mobile-controls">
+        <button class="action-btn btn-new-mobile" id="mobileNewGame" title="Nueva partida">🔄 Nuevo</button>
         <button class="action-btn btn-undo" id="mobileUndoBtn">↩ Deshacer</button>
         <button class="action-btn btn-sound" id="mobileSoundBtn" title="Sonido">🔊</button>
     </div>
@@ -1883,6 +1902,8 @@
             validMoves = [];
             renderBoard();
 
+            // Wait for layout to complete before animating
+            requestAnimationFrame(() => { requestAnimationFrame(() => {
             animateMove(move.from, move.to, piece, () => {
                 stateHistory.push(cloneState());
                 const result = makeMove(board, move, castling, enPassant);
@@ -1910,6 +1931,7 @@
                     setStatus('Tu turno (Blancas)', '');
                 }
             });
+            }); });
         }, thinkDelay);
     }
 
