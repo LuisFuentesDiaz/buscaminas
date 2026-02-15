@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="description" content="Buscaminas - Juego clásico con diseño moderno">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Buscaminas">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkJ1c2NhbWluYXMiLAogICJzaG9ydF9uYW1lIjogIk1pbmVzIiwKICAiZGVzY3JpcHRpb24iOiAiSnVlZ28gY2zDoXNpY28gZGVsIEJ1c2NhbWluYXMiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBhMGUyNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwYTBlMjciLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnJTNFJTNDcmVjdCBmaWxsPSclMjMwYTBlMjcnIHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJy8lM0UlM0N0ZXh0IHg9JzUwJyB5PSc3MCcgZm9udC1zaXplPSc2MCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nJTIzZmYwMDZlJyUzRSTwn5qpJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnJTNFJTNDcmVjdCBmaWxsPSclMjMwYTBlMjcnIHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJy8lM0UlM0N0ZXh0IHg9JzUwJyB5PSc3MCcgZm9udC1zaXplPSc2MCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nJTIzZmYwMDZlJyUzRSTwn5qpJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
+    <title>💣 Buscaminas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #151b3d;
+            --bg-tertiary: #1e2749;
+            --accent-primary: #ff006e;
+            --accent-secondary: #00f5ff;
+            --accent-tertiary: #ffbe0b;
+            --text-primary: #ffffff;
+            --text-secondary: #a8b2d1;
+            --cell-unrevealed: #2a3f5f;
+            --cell-revealed: #151b3d;
+            --cell-hover: #3d5a80;
+            --border-glow: rgba(0, 245, 255, 0.3);
+            --mine-color: #ff006e;
+            --flag-color: #ffbe0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #1a0e2e 100%);
+            color: var(--text-primary);
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: stretch;
+            padding: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+            max-width: 850px;
+            justify-content: center;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 110, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 245, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+            z-index: 1;
+            animation: slideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+            z-index: 1;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            text-shadow: 0 0 30px rgba(255, 0, 110, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
+        }
+
+        .subtitle {
+            font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+            color: var(--text-secondary);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .stats-panel {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 80px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--bg-tertiary);
+            border-radius: 10px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-secondary), transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            to { left: 100%; }
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 245, 255, 0.2);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex: 1 0 100%;
+        }
+
+        /* Ocultar botón de bandera en todas las plataformas */
+        #toggleFlagBtn {
+            display: none !important;
+        }
+
+        /* Botón de sonido - estilos base para desktop */
+        #soundBtn {
+            flex: 1;
+        }
+
+        #soundBtn.muted {
+            opacity: 0.6;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-color: var(--text-secondary);
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), #d90058);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 0, 110, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 0, 110, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--accent-secondary);
+            border: 2px solid var(--accent-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-secondary);
+            color: var(--bg-primary);
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+            background: var(--bg-secondary);
+            padding: 4px;
+            border-radius: 10px;
+            border: 2px solid var(--bg-tertiary);
+            flex-shrink: 0;
+        }
+
+        .difficulty-btn {
+            flex: 1;
+            padding: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .difficulty-btn.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 0, 110, 0.4);
+        }
+
+        .game-board {
+            background: var(--bg-secondary);
+            border: 3px solid var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 10px;
+            box-shadow: 
+                0 0 30px rgba(0, 245, 255, 0.1),
+                inset 0 0 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .grid {
+            display: grid;
+            gap: 3px;
+            background: var(--bg-tertiary);
+            padding: 3px;
+            border-radius: 8px;
+            touch-action: manipulation;
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .cell {
+            background: var(--cell-unrevealed);
+            border: none;
+            border-radius: 4px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.7rem, 1.8vw, 1.1rem);
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            min-width: 0;
+            min-height: 0;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            overflow: hidden;
+        }
+
+        .cell:not(.revealed):not(.flagged):hover {
+            background: var(--cell-hover);
+        }
+
+        .cell.revealed {
+            background: var(--cell-revealed);
+            cursor: default;
+        }
+
+        .cell.flagged {
+            background: var(--cell-unrevealed);
+        }
+
+        .cell.questioned {
+            background: var(--cell-unrevealed);
+            opacity: 0.85;
+        }
+
+        .cell.mine {
+            background: var(--mine-color);
+            color: white;
+        }
+
+        .cell.number-1 { color: #00f5ff; }
+        .cell.number-2 { color: #00ff88; }
+        .cell.number-3 { color: #ffbe0b; }
+        .cell.number-4 { color: #ff006e; }
+        .cell.number-5 { color: #ff6b35; }
+        .cell.number-6 { color: #9d4edd; }
+        .cell.number-7 { color: #f72585; }
+        .cell.number-8 { color: #e63946; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 39, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 3px solid var(--accent-primary);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: modalSlide 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 0 50px rgba(255, 0, 110, 0.5);
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: scale(0.8) translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-message {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: var(--text-secondary);
+        }
+
+        .install-prompt {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-secondary);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: none;
+            animation: slideDown 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            flex-shrink: 0;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        .install-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+                justify-content: flex-start;
+                padding-top: 5px;
+                overflow: hidden;
+            }
+
+            .main-wrapper {
+                flex: 1;
+                min-height: 0;
+            }
+
+            .container {
+                padding: 0;
+                max-width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Ocultar header completo en móvil */
+            .header {
+                display: none;
+            }
+
+            /* Ocultar selector de dificultad en móvil */
+            .difficulty-selector {
+                display: none;
+            }
+
+            /* Ocultar botón de bandera en móvil */
+            #toggleFlagBtn {
+                display: none;
+            }
+
+            /* Botón de sonido flotante en móvil */
+            #soundBtn {
+                display: flex;
+                min-width: 50px;
+                padding: 8px;
+                font-size: 1.5rem;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                right: 10px;
+                bottom: 10px;
+                z-index: 10;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                background: var(--bg-secondary);
+                border: 2px solid var(--accent-secondary);
+                color: var(--accent-secondary);
+                cursor: pointer;
+                flex: none;
+            }
+
+            #soundBtn.muted {
+                opacity: 0.5;
+                border-color: var(--text-secondary);
+                color: var(--text-secondary);
+            }
+
+            .install-prompt {
+                margin-bottom: 8px;
+                padding: 8px;
+                flex-shrink: 0;
+            }
+
+            .install-text {
+                font-size: 0.7rem;
+                margin-bottom: 6px;
+            }
+
+            /* Reorganizar stats y botón en grid horizontal */
+            .stats-panel {
+                display: grid;
+                grid-template-columns: 1fr 1fr auto 1fr;
+                gap: 6px;
+                margin-bottom: 10px;
+                align-items: center;
+                flex-shrink: 0;
+            }
+
+            /* Stats: Minas y Banderas a la izquierda */
+            .stat-card {
+                min-width: auto;
+                padding: 4px 6px;
+                border-radius: 6px;
+                flex: none;
+            }
+
+            .stat-card:nth-child(1),
+            .stat-card:nth-child(2) {
+                grid-row: 1;
+            }
+
+            .stat-label {
+                font-size: 0.5rem;
+                letter-spacing: 0.3px;
+            }
+
+            .stat-value {
+                font-size: 0.8rem;
+            }
+
+            /* Botón nuevo juego circular en el centro */
+            .controls {
+                grid-column: 3;
+                grid-row: 1;
+                margin: 0;
+                padding: 0 8px;
+                display: flex;
+                justify-content: center;
+                flex: none;
+            }
+
+            #newGameBtn {
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                padding: 0;
+                font-size: 1.4rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                box-shadow: 0 4px 20px rgba(255, 0, 110, 0.5);
+                min-width: auto;
+            }
+
+            /* Timer a la derecha */
+            .stat-card:nth-child(4) {
+                grid-column: 4;
+                grid-row: 1;
+            }
+
+            .game-board {
+                padding: 3px;
+                margin-bottom: 0;
+                border-width: 2px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+            }
+
+            .grid {
+                gap: 3px;
+                padding: 3px;
+                flex: 1;
+                display: grid;
+                align-content: stretch;
+                justify-content: stretch;
+                align-items: stretch;
+                justify-items: stretch;
+                width: 100%;
+                height: 100%;
+            }
+
+            .cell {
+                border-radius: 6px;
+                font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+                min-width: 0;
+                min-height: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .modal-title {
+                font-size: 1.5rem;
+            }
+
+            .modal-message {
+                font-size: 0.95rem;
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Modo landscape en móviles */
+        @media (max-width: 900px) and (orientation: landscape) {
+            body {
+                padding: 5px;
+                overflow: hidden;
+            }
+
+            .main-wrapper {
+                flex: 1;
+                min-height: 0;
+            }
+
+            .container {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .header {
+                display: none;
+            }
+
+            .difficulty-selector {
+                display: none;
+            }
+
+            #toggleFlagBtn {
+                display: none;
+            }
+
+            #soundBtn {
+                display: flex;
+                min-width: 45px;
+                padding: 6px;
+                font-size: 1.3rem;
+                border-radius: 50%;
+                width: 45px;
+                height: 45px;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                right: 8px;
+                bottom: 8px;
+                z-index: 10;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            }
+
+            .stats-panel {
+                display: grid;
+                grid-template-columns: 1fr 1fr auto 1fr;
+                gap: 6px;
+                margin-bottom: 8px;
+                align-items: center;
+                flex-shrink: 0;
+            }
+
+            .stat-card {
+                padding: 3px 5px;
+                min-width: auto;
+                flex: none;
+            }
+
+            .stat-label {
+                font-size: 0.45rem;
+            }
+
+            .stat-value {
+                font-size: 0.7rem;
+            }
+
+            .controls {
+                grid-column: 3;
+                grid-row: 1;
+                margin: 0;
+                padding: 0 6px;
+                flex: none;
+            }
+
+            #newGameBtn {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                padding: 0;
+                font-size: 1.2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .stat-card:nth-child(4) {
+                grid-column: 4;
+                grid-row: 1;
+            }
+
+            .game-board {
+                margin-bottom: 0;
+                padding: 5px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+            }
+
+            .grid {
+                flex: 1;
+                display: grid;
+                align-content: stretch;
+                justify-content: stretch;
+                gap: 2px;
+                padding: 2px;
+                width: 100%;
+                height: 100%;
+            }
+
+            .cell {
+                font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+                border-radius: 3px;
+                min-width: 0;
+                min-height: 0;
+            }
+
+            .install-prompt {
+                flex-shrink: 0;
+            }
+        }
+
+        @media (hover: none) {
+            .cell:not(.revealed):not(.flagged):hover {
+                background: var(--cell-unrevealed);
+            }
+        }
+
+        /* Panel de mejores tiempos */
+        .records-panel {
+            width: 220px;
+            min-width: 180px;
+            max-width: 250px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 16px 14px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1;
+            overflow: hidden;
+            flex-shrink: 0;
+            animation: slideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .records-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, var(--accent-tertiary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            flex-shrink: 0;
+        }
+
+        .records-difficulty-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        .records-tab {
+            flex: 1;
+            padding: 5px 2px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .records-tab.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border-color: transparent;
+        }
+
+        .records-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .records-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .records-list::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+        }
+
+        .records-list::-webkit-scrollbar-thumb {
+            background: var(--accent-secondary);
+            border-radius: 2px;
+        }
+
+        .record-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .record-item:hover {
+            background: var(--cell-hover);
+        }
+
+        .record-item.gold {
+            border-left: 3px solid #ffbe0b;
+        }
+
+        .record-item.silver {
+            border-left: 3px solid #c0c0c0;
+        }
+
+        .record-item.bronze {
+            border-left: 3px solid #cd7f32;
+        }
+
+        .record-rank {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 900;
+            color: var(--text-secondary);
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .record-item.gold .record-rank { color: #ffbe0b; }
+        .record-item.silver .record-rank { color: #c0c0c0; }
+        .record-item.bronze .record-rank { color: #cd7f32; }
+
+        .record-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            min-width: 0;
+        }
+
+        .record-time {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+        }
+
+        .record-date {
+            font-size: 0.55rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .record-empty {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding: 20px 10px;
+            opacity: 0.6;
+        }
+
+        .record-new {
+            animation: recordHighlight 1.5s ease-out;
+        }
+
+        @keyframes recordHighlight {
+            0% { background: rgba(0, 245, 255, 0.3); transform: scale(1.03); }
+            100% { background: var(--bg-tertiary); transform: scale(1); }
+        }
+
+        /* Ocultar panel de records en móvil */
+        @media (max-width: 480px) {
+            .records-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 900px) and (orientation: landscape) {
+            .records-panel {
+                display: none;
+            }
+        }
+
+        /* Ajustar panel en pantallas medianas */
+        @media (max-width: 900px) and (min-width: 481px) {
+            .records-panel {
+                width: 180px;
+                min-width: 150px;
+                padding: 12px 10px;
+            }
+
+            .records-title {
+                font-size: 0.75rem;
+            }
+
+            .record-time {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💣 Minas</h1>
+        <div class="subtitle">Buscaminas</div>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="install-prompt" id="installPrompt">
+                <div class="install-text">📱 Instala esta app en tu dispositivo</div>
+                <button class="btn btn-primary" id="installBtn">Instalar App</button>
+            </div>
+
+            <div class="stats-panel">
+                <div class="stat-card">
+                    <div class="stat-label">Minas</div>
+                    <div class="stat-value" id="minesCount">10</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Banderas</div>
+                    <div class="stat-value" id="flagsCount">0</div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-primary" id="newGameBtn">🎮</button>
+                    <button class="btn btn-secondary" id="soundBtn" title="Activar/Desactivar sonidos">🔊</button>
+                    <button class="btn btn-secondary" id="toggleFlagBtn">🚩 Bandera</button>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Tiempo</div>
+                    <div class="stat-value" id="timer">0</div>
+                </div>
+            </div>
+
+            <div class="difficulty-selector">
+                <button class="difficulty-btn active" data-difficulty="easy">Fácil</button>
+                <button class="difficulty-btn" data-difficulty="medium">Medio</button>
+                <button class="difficulty-btn" data-difficulty="hard">Difícil</button>
+            </div>
+
+            <div class="game-board">
+                <div class="grid" id="gameGrid"></div>
+            </div>
+        </div>
+
+        <div class="records-panel" id="recordsPanel">
+            <div class="records-title">🏆 Top 10</div>
+            <div class="records-difficulty-tabs">
+                <button class="records-tab active" data-records-diff="easy">Fácil</button>
+                <button class="records-tab" data-records-diff="medium">Medio</button>
+                <button class="records-tab" data-records-diff="hard">Difícil</button>
+            </div>
+            <div class="records-list" id="recordsList"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="gameModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">¡Victoria!</div>
+            <div class="modal-message" id="modalMessage">Has ganado el juego</div>
+            <button class="btn btn-primary" id="modalBtn">Jugar de Nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuración del juego
+        const difficulties = {
+            easy: { rows: 8, cols: 8, mines: 14 },      // 22% (antes 10)
+            medium: { rows: 12, cols: 12, mines: 37 },  // 26% (antes 25)
+            hard: { rows: 16, cols: 16, mines: 50 }     // ~19.5%
+        };
+
+        let currentDifficulty = 'easy';
+        let config = difficulties[currentDifficulty];
+        let board = [];
+        let revealed = [];
+        let flagged = [];
+        let questioned = []; // Nuevo array para celdas con ?
+        let gameOver = false;
+        let gameWon = false;
+        let timer = 0;
+        let timerInterval = null;
+        let flagMode = false;
+        let isMobile = window.innerWidth <= 480;
+
+        // Sistema de sonidos
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let soundsEnabled = true;
+
+        // Función para crear tonos
+        function playTone(frequency, duration, type = 'sine', volume = 0.3) {
+            if (!soundsEnabled) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            
+            // Envelope suave para evitar clicks
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        // Sonidos del juego - más suaves
+        const sounds = {
+            click: () => playTone(600, 0.04, 'sine', 0.08),
+            reveal: () => playTone(500, 0.06, 'sine', 0.06),
+            flag: () => {
+                playTone(800, 0.04, 'sine', 0.1);
+                setTimeout(() => playTone(950, 0.04, 'sine', 0.08), 40);
+            },
+            question: () => playTone(700, 0.08, 'triangle', 0.07),
+            unflag: () => playTone(550, 0.06, 'sine', 0.06),
+            win: () => {
+                playTone(523, 0.12, 'sine', 0.12); // Do
+                setTimeout(() => playTone(659, 0.12, 'sine', 0.12), 120); // Mi
+                setTimeout(() => playTone(784, 0.25, 'sine', 0.12), 240); // Sol
+            },
+            lose: () => {
+                playTone(300, 0.08, 'sine', 0.15);
+                setTimeout(() => playTone(250, 0.12, 'sine', 0.12), 80);
+                setTimeout(() => playTone(200, 0.2, 'sine', 0.1), 150);
+            },
+            cascade: (delay = 0) => {
+                setTimeout(() => playTone(450 + Math.random() * 100, 0.02, 'sine', 0.04), delay);
+            }
+        };
+
+        // Elementos DOM
+        const gameGrid = document.getElementById('gameGrid');
+        const minesCount = document.getElementById('minesCount');
+        const flagsCount = document.getElementById('flagsCount');
+        const timerDisplay = document.getElementById('timer');
+        const newGameBtn = document.getElementById('newGameBtn');
+        const toggleFlagBtn = document.getElementById('toggleFlagBtn');
+        const gameModal = document.getElementById('gameModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalBtn = document.getElementById('modalBtn');
+        const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+        const soundBtn = document.getElementById('soundBtn');
+
+        // === Sistema de Records con IndexedDB ===
+        const recordsList = document.getElementById('recordsList');
+        const recordsTabs = document.querySelectorAll('.records-tab');
+        let currentRecordsView = 'easy';
+
+        // Abrir/crear base de datos IndexedDB
+        function openRecordsDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('BuscaminasRecords', 1);
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('records')) {
+                        const store = db.createObjectStore('records', { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('difficulty', 'difficulty', { unique: false });
+                        store.createIndex('time', 'time', { unique: false });
+                    }
+                };
+                request.onsuccess = (e) => resolve(e.target.result);
+                request.onerror = (e) => reject(e.target.error);
+            });
+        }
+
+        // Guardar un nuevo record
+        async function saveRecord(difficulty, time) {
+            try {
+                const db = await openRecordsDB();
+                const tx = db.transaction('records', 'readwrite');
+                const store = tx.objectStore('records');
+                
+                const record = {
+                    difficulty: difficulty,
+                    time: time,
+                    date: new Date().toISOString()
+                };
+                
+                store.add(record);
+                
+                await new Promise((resolve, reject) => {
+                    tx.oncomplete = resolve;
+                    tx.onerror = reject;
+                });
+
+                // Limpiar: mantener solo los 10 mejores por dificultad
+                await trimRecords(difficulty);
+                
+                db.close();
+                renderRecords(currentRecordsView, time);
+            } catch (err) {
+                console.error('Error guardando record:', err);
+            }
+        }
+
+        // Mantener solo top 10 por dificultad
+        async function trimRecords(difficulty) {
+            try {
+                const db = await openRecordsDB();
+                const tx = db.transaction('records', 'readwrite');
+                const store = tx.objectStore('records');
+                const index = store.index('difficulty');
+                
+                const records = await new Promise((resolve, reject) => {
+                    const req = index.getAll(difficulty);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+                
+                // Ordenar por tiempo ascendente
+                records.sort((a, b) => a.time - b.time);
+                
+                // Eliminar los que sobran del top 10
+                if (records.length > 10) {
+                    const toDelete = records.slice(10);
+                    for (const rec of toDelete) {
+                        store.delete(rec.id);
+                    }
+                }
+                
+                await new Promise((resolve, reject) => {
+                    tx.oncomplete = resolve;
+                    tx.onerror = reject;
+                });
+                
+                db.close();
+            } catch (err) {
+                console.error('Error limpiando records:', err);
+            }
+        }
+
+        // Obtener los top 10 records de una dificultad
+        async function getRecords(difficulty) {
+            try {
+                const db = await openRecordsDB();
+                const tx = db.transaction('records', 'readonly');
+                const store = tx.objectStore('records');
+                const index = store.index('difficulty');
+                
+                const records = await new Promise((resolve, reject) => {
+                    const req = index.getAll(difficulty);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+                
+                db.close();
+                
+                // Ordenar por tiempo ascendente y tomar top 10
+                records.sort((a, b) => a.time - b.time);
+                return records.slice(0, 10);
+            } catch (err) {
+                console.error('Error leyendo records:', err);
+                return [];
+            }
+        }
+
+        // Renderizar la lista de records
+        async function renderRecords(difficulty, highlightTime = null) {
+            const records = await getRecords(difficulty);
+            recordsList.innerHTML = '';
+            
+            if (records.length === 0) {
+                recordsList.innerHTML = '<div class="record-empty">Sin records aún.<br>¡Gana una partida!</div>';
+                return;
+            }
+            
+            records.forEach((rec, i) => {
+                const item = document.createElement('div');
+                item.className = 'record-item';
+                
+                if (i === 0) item.classList.add('gold');
+                else if (i === 1) item.classList.add('silver');
+                else if (i === 2) item.classList.add('bronze');
+                
+                // Resaltar el record recién agregado
+                if (highlightTime !== null && rec.time === highlightTime) {
+                    item.classList.add('record-new');
+                    highlightTime = null; // Solo resaltar el primero que coincida
+                }
+                
+                const date = new Date(rec.date);
+                const dateStr = date.toLocaleDateString('es-ES', { 
+                    day: '2-digit', month: 'short', year: '2-digit' 
+                });
+                const timeStr = date.toLocaleTimeString('es-ES', { 
+                    hour: '2-digit', minute: '2-digit' 
+                });
+                
+                item.innerHTML = `
+                    <div class="record-rank">${i + 1}</div>
+                    <div class="record-info">
+                        <div class="record-time">${rec.time}s</div>
+                        <div class="record-date">${dateStr} ${timeStr}</div>
+                    </div>
+                `;
+                
+                recordsList.appendChild(item);
+            });
+        }
+
+        // Tabs de dificultad en el panel de records
+        recordsTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                recordsTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentRecordsView = tab.dataset.recordsDiff;
+                renderRecords(currentRecordsView);
+            });
+        });
+
+        // Renderizar records iniciales
+        renderRecords(currentRecordsView);
+
+        // Toggle de sonido
+        soundBtn.addEventListener('click', () => {
+            soundsEnabled = !soundsEnabled;
+            soundBtn.textContent = soundsEnabled ? '🔊' : '🔇';
+            soundBtn.classList.toggle('muted', !soundsEnabled);
+            if (soundsEnabled) {
+                sounds.click();
+            }
+        });
+
+        // Función para calcular el tamaño óptimo del tablero según la pantalla
+        function calculateOptimalGridSize() {
+            // Usar la configuración predefinida de dificultad
+            return difficulties[currentDifficulty];
+        }
+
+        // Inicializar juego
+        function initGame() {
+            config = calculateOptimalGridSize();
+            board = [];
+            revealed = [];
+            flagged = [];
+            questioned = [];
+            gameOver = false;
+            gameWon = false;
+            timer = 0;
+            flagMode = false;
+            
+            clearInterval(timerInterval);
+            timerDisplay.textContent = '0';
+            updateFlagButton();
+            
+            createBoard();
+            placeMines();
+            calculateNumbers();
+            renderBoard();
+            updateStats();
+        }
+
+        // Crear tablero vacío
+        function createBoard() {
+            for (let r = 0; r < config.rows; r++) {
+                board[r] = [];
+                revealed[r] = [];
+                flagged[r] = [];
+                questioned[r] = [];
+                for (let c = 0; c < config.cols; c++) {
+                    board[r][c] = 0;
+                    revealed[r][c] = false;
+                    flagged[r][c] = false;
+                    questioned[r][c] = false;
+                }
+            }
+        }
+
+        // Colocar minas
+        function placeMines() {
+            let minesPlaced = 0;
+            while (minesPlaced < config.mines) {
+                const r = Math.floor(Math.random() * config.rows);
+                const c = Math.floor(Math.random() * config.cols);
+                if (board[r][c] !== -1) {
+                    board[r][c] = -1;
+                    minesPlaced++;
+                }
+            }
+        }
+
+        // Calcular números
+        function calculateNumbers() {
+            for (let r = 0; r < config.rows; r++) {
+                for (let c = 0; c < config.cols; c++) {
+                    if (board[r][c] === -1) continue;
+                    
+                    let count = 0;
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            const nr = r + dr;
+                            const nc = c + dc;
+                            if (nr >= 0 && nr < config.rows && nc >= 0 && nc < config.cols) {
+                                if (board[nr][nc] === -1) count++;
+                            }
+                        }
+                    }
+                    board[r][c] = count;
+                }
+            }
+        }
+
+        // Renderizar tablero
+        function renderBoard() {
+            gameGrid.innerHTML = '';
+            gameGrid.style.gridTemplateColumns = `repeat(${config.cols}, 1fr)`;
+            gameGrid.style.gridTemplateRows = `repeat(${config.rows}, 1fr)`;
+            
+            for (let r = 0; r < config.rows; r++) {
+                for (let c = 0; c < config.cols; c++) {
+                    const cell = document.createElement('button');
+                    cell.className = 'cell';
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    
+                    if (revealed[r][c]) {
+                        cell.classList.add('revealed');
+                        if (board[r][c] === -1) {
+                            cell.textContent = '💣';
+                            cell.classList.add('mine');
+                        } else if (board[r][c] > 0) {
+                            cell.textContent = board[r][c];
+                            cell.classList.add(`number-${board[r][c]}`);
+                        }
+                    } else if (flagged[r][c]) {
+                        cell.textContent = '🚩';
+                        cell.classList.add('flagged');
+                    } else if (questioned[r][c]) {
+                        cell.textContent = '❓';
+                        cell.classList.add('questioned');
+                    }
+                    
+                    cell.addEventListener('click', () => handleCellClick(r, c));
+                    cell.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        handleRightClick(r, c);
+                    });
+                    
+                    // Sistema táctil simplificado para móviles - 2 toques
+                    let touchStartTime;
+                    let touchMoved = false;
+                    
+                    cell.addEventListener('touchstart', (e) => {
+                        touchMoved = false;
+                        touchStartTime = Date.now();
+                    }, { passive: true });
+                    
+                    cell.addEventListener('touchmove', (e) => {
+                        touchMoved = true;
+                    }, { passive: true });
+                    
+                    cell.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        
+                        // Si se movió el dedo, ignorar
+                        if (touchMoved) return;
+                        
+                        // Si el juego terminó, ignorar
+                        if (gameOver || gameWon) return;
+                        
+                        // Si ya está revelada, ignorar
+                        if (revealed[r][c]) return;
+                        
+                        // Si NO tiene bandera (vacía)
+                        if (!flagged[r][c]) {
+                            // Primer toque: colocar bandera
+                            flagged[r][c] = true;
+                            questioned[r][c] = false;
+                            sounds.flag();
+                            if (navigator.vibrate) navigator.vibrate(30);
+                            updateStats();
+                            renderBoard();
+                        } 
+                        // Si tiene bandera
+                        else {
+                            // Segundo toque: quitar bandera y revelar
+                            flagged[r][c] = false;
+                            questioned[r][c] = false;
+                            handleCellClick(r, c);
+                        }
+                    });
+                    
+                    cell.addEventListener('touchcancel', () => {
+                        touchMoved = false;
+                    });
+                    
+                    gameGrid.appendChild(cell);
+                }
+            }
+        }
+
+        // Manejar clic en celda
+        function handleCellClick(r, c) {
+            if (gameOver || gameWon) return;
+            if (revealed[r][c]) return;
+            
+            // Iniciar timer en el primer clic
+            if (timer === 0) {
+                startTimer();
+            }
+            
+            if (flagMode) {
+                handleRightClick(r, c);
+                return;
+            }
+            
+            // No permitir revelar celdas con bandera, pero sí con pregunta
+            if (flagged[r][c]) return;
+            
+            // Si tiene pregunta, quitarla antes de revelar
+            if (questioned[r][c]) {
+                questioned[r][c] = false;
+            }
+            
+            if (board[r][c] === -1) {
+                sounds.lose();
+                gameOver = true;
+                revealAllMines();
+                showModal('💥 Game Over', 'Has pisado una mina');
+                stopTimer();
+                return;
+            }
+            
+            sounds.click();
+            revealCell(r, c);
+            checkWin();
+        }
+
+        // Manejar clic derecho / long press (ciclo: vacío → bandera → pregunta → vacío)
+        function handleRightClick(r, c) {
+            if (gameOver || gameWon) return;
+            if (revealed[r][c]) return;
+            
+            if (!flagged[r][c] && !questioned[r][c]) {
+                // Vacío → Bandera
+                flagged[r][c] = true;
+                sounds.flag();
+            } else if (flagged[r][c]) {
+                // Bandera → Pregunta
+                flagged[r][c] = false;
+                questioned[r][c] = true;
+                sounds.question();
+            } else if (questioned[r][c]) {
+                // Pregunta → Vacío
+                questioned[r][c] = false;
+                sounds.unflag();
+            }
+            
+            updateStats();
+            renderBoard();
+        }
+
+        // Revelar celda
+        let revealCount = 0;
+        function revealCell(r, c) {
+            if (r < 0 || r >= config.rows || c < 0 || c >= config.cols) return;
+            if (revealed[r][c] || flagged[r][c] || questioned[r][c]) return;
+            
+            revealed[r][c] = true;
+            
+            // Sonido de cascada con delay
+            if (board[r][c] === 0) {
+                sounds.cascade(revealCount * 10);
+                revealCount++;
+            } else {
+                sounds.reveal();
+                revealCount = 0;
+            }
+            
+            if (board[r][c] === 0) {
+                for (let dr = -1; dr <= 1; dr++) {
+                    for (let dc = -1; dc <= 1; dc++) {
+                        revealCell(r + dr, c + dc);
+                    }
+                }
+            }
+            
+            renderBoard();
+        }
+
+        // Revelar todas las minas
+        function revealAllMines() {
+            for (let r = 0; r < config.rows; r++) {
+                for (let c = 0; c < config.cols; c++) {
+                    if (board[r][c] === -1) {
+                        revealed[r][c] = true;
+                    }
+                }
+            }
+            renderBoard();
+        }
+
+        // Comprobar victoria
+        function checkWin() {
+            let cellsToReveal = config.rows * config.cols - config.mines;
+            let revealedCount = 0;
+            
+            for (let r = 0; r < config.rows; r++) {
+                for (let c = 0; c < config.cols; c++) {
+                    if (revealed[r][c] && board[r][c] !== -1) {
+                        revealedCount++;
+                    }
+                }
+            }
+            
+            if (revealedCount === cellsToReveal) {
+                gameWon = true;
+                stopTimer();
+                sounds.win();
+                showModal('🎉 ¡Victoria!', `Has ganado en ${timer} segundos`);
+                
+                // Guardar record y actualizar vista
+                saveRecord(currentDifficulty, timer);
+                
+                // Cambiar la tab de records a la dificultad actual
+                currentRecordsView = currentDifficulty;
+                recordsTabs.forEach(t => {
+                    t.classList.toggle('active', t.dataset.recordsDiff === currentDifficulty);
+                });
+            }
+        }
+
+        // Actualizar estadísticas
+        function updateStats() {
+            minesCount.textContent = config.mines;
+            
+            let flagCount = 0;
+            for (let r = 0; r < config.rows; r++) {
+                for (let c = 0; c < config.cols; c++) {
+                    if (flagged[r][c]) flagCount++;
+                }
+            }
+            flagsCount.textContent = flagCount;
+        }
+
+        // Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timer++;
+                timerDisplay.textContent = timer;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // Modal
+        function showModal(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            gameModal.classList.add('show');
+        }
+
+        function hideModal() {
+            gameModal.classList.remove('show');
+        }
+
+        // Actualizar botón de bandera
+        function updateFlagButton() {
+            if (flagMode) {
+                toggleFlagBtn.style.background = 'linear-gradient(135deg, var(--accent-tertiary), #e6a500)';
+                toggleFlagBtn.style.color = 'var(--bg-primary)';
+            } else {
+                toggleFlagBtn.style.background = '';
+                toggleFlagBtn.style.color = '';
+            }
+        }
+
+        // Event listeners
+        newGameBtn.addEventListener('click', initGame);
+        modalBtn.addEventListener('click', () => {
+            hideModal();
+            initGame();
+        });
+
+        toggleFlagBtn.addEventListener('click', () => {
+            flagMode = !flagMode;
+            updateFlagButton();
+        });
+
+        difficultyBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                difficultyBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentDifficulty = btn.dataset.difficulty;
+                initGame();
+                
+                // Sincronizar tab de records con dificultad seleccionada
+                currentRecordsView = currentDifficulty;
+                recordsTabs.forEach(t => {
+                    t.classList.toggle('active', t.dataset.recordsDiff === currentDifficulty);
+                });
+                renderRecords(currentRecordsView);
+            });
+        });
+
+        // PWA Installation
+        let deferredPrompt;
+        const installPrompt = document.getElementById('installPrompt');
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installPrompt.classList.add('show');
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            
+            if (outcome === 'accepted') {
+                installPrompt.classList.remove('show');
+            }
+            
+            deferredPrompt = null;
+        });
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript;base64,Y29uc3QgQ0FDSEVfTkFNRSA9ICdtaW5lc3dlZXBlci12MSc7CmNvbnN0IHVybHNUb0NhY2hlID0gWycvJ107CnNlbGYuYWRkRXZlbnRMaXN0ZW5lcignaW5zdGFsbCcsIGUgPT4gZS53YWl0VW50aWwoY2FjaGVzLm9wZW4oQ0FDSEVfTkFNRSkudGhlbihjID0+IGMuYWRkQWxsKHVybHNUb0NhY2hlKSkpKTsKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGUgPT4gZS5yZXNwb25kV2l0aChjYWNoZXMubWF0Y2goZS5yZXF1ZXN0KS50aGVuKHIgPT4gciB8fCBmZXRjaChlLnJlcXVlc3QpKSkpOw==');
+        }
+
+        // Iniciar juego
+        initGame();
+
+        // Recalcular tamaño cuando cambia la orientación o el tamaño de ventana
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                const wasMobile = isMobile;
+                isMobile = window.innerWidth <= 480;
+                
+                // Solo reiniciar si cambió entre móvil y desktop
+                if (wasMobile !== isMobile) {
+                    initGame();
+                }
+            }, 300);
+        });
+
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                initGame();
+            }, 300);
+        });
+    </script>
+</body>
+</html>
