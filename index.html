@@ -88,7 +88,7 @@
             width: 100%;
             flex: 1;
             min-height: 0;
-            z-index: 1;
+            z-index: 10;
             animation: slideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
             display: flex;
             flex-direction: column;
@@ -110,7 +110,7 @@
             text-align: center;
             margin-bottom: 8px;
             flex-shrink: 0;
-            z-index: 10;
+            z-index: 1;
             width: 100%;
             position: relative;
         }
@@ -205,6 +205,15 @@
             display: flex;
             gap: 10px;
             flex: 1 0 100%;
+        }
+
+        /* Desktop: mostrar texto, ocultar icono móvil */
+        .btn-label-desktop {
+            display: inline;
+        }
+
+        .btn-label-mobile {
+            display: none;
         }
 
         /* Ocultar botón de bandera en todas las plataformas */
@@ -738,7 +747,7 @@
                 margin-bottom: 4px;
                 padding: 8px 10px 0;
                 flex-shrink: 0;
-                z-index: 50;
+                z-index: 2;
             }
 
             .header-center {
@@ -775,11 +784,15 @@
 
             .mobile-difficulty-dropdown {
                 display: block;
-                z-index: 100;
             }
 
             .mobile-diff-menu {
-                z-index: 200;
+                position: fixed;
+                left: 50%;
+                transform: translateX(-50%);
+                top: auto;
+                min-width: 140px;
+                z-index: 500;
             }
 
             /* Ocultar botón de bandera en móvil */
@@ -846,18 +859,29 @@
                 align-items: center;
             }
 
+            .btn-label-desktop {
+                display: none;
+            }
+
+            .btn-label-mobile {
+                display: inline;
+            }
+
             #newGameBtn {
-                width: 44px;
-                height: 44px;
-                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
                 padding: 0;
-                font-size: 1.2rem;
+                font-size: 1.1rem;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 flex-shrink: 0;
-                box-shadow: 0 4px 16px rgba(255, 0, 110, 0.5);
                 min-width: auto;
+                background: var(--bg-tertiary);
+                border: 2px solid var(--accent-primary);
+                color: var(--accent-primary);
+                box-shadow: 0 2px 10px rgba(255, 0, 110, 0.3);
             }
 
             /* Touch hint visible en móvil */
@@ -955,7 +979,7 @@
                 margin-bottom: 3px;
                 padding: 2px 6px 0;
                 flex-shrink: 0;
-                z-index: 50;
+                z-index: 2;
             }
 
             .header-center {
@@ -990,11 +1014,15 @@
 
             .mobile-difficulty-dropdown {
                 display: block;
-                z-index: 100;
             }
 
             .mobile-diff-menu {
-                z-index: 200;
+                position: fixed;
+                left: 50%;
+                transform: translateX(-50%);
+                top: auto;
+                min-width: 140px;
+                z-index: 500;
             }
 
             #toggleFlagBtn {
@@ -1044,16 +1072,28 @@
                 align-items: center;
             }
 
+            .btn-label-desktop {
+                display: none;
+            }
+
+            .btn-label-mobile {
+                display: inline;
+            }
+
             #newGameBtn {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                border-radius: 8px;
                 padding: 0;
-                font-size: 1rem;
+                font-size: 0.85rem;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 min-width: auto;
+                background: var(--bg-tertiary);
+                border: 2px solid var(--accent-primary);
+                color: var(--accent-primary);
+                box-shadow: 0 2px 8px rgba(255, 0, 110, 0.3);
             }
 
             .touch-hint {
@@ -1335,7 +1375,7 @@
                     <div class="stat-value" id="flagsCount">0</div>
                 </div>
                 <div class="controls">
-                    <button class="btn btn-primary" id="newGameBtn">🎮</button>
+                    <button class="btn btn-primary" id="newGameBtn"><span class="btn-label-desktop">Nuevo Juego</span><span class="btn-label-mobile">▶</span></button>
                     <button class="btn btn-secondary" id="soundBtn" title="Activar/Desactivar sonidos">🔊</button>
                     <button class="btn btn-secondary" id="toggleFlagBtn">🚩 Bandera</button>
                 </div>
@@ -1398,9 +1438,9 @@
     <script>
         // Configuración del juego
         const difficulties = {
-            easy: { rows: 8, cols: 8, mines: 14 },      // 22% (antes 10)
-            medium: { rows: 12, cols: 12, mines: 37 },  // 26% (antes 25)
-            hard: { rows: 16, cols: 16, mines: 50 }     // ~19.5%
+            easy: { rows: 8, cols: 6, mines: 10 },      // 22% (antes 10)
+            medium: { rows: 10, cols: 8, mines: 25 },  // 26% (antes 25)
+            hard: { rows: 12, cols: 10, mines: 37 }     // ~19.5%
         };
 
         let currentDifficulty = 'easy';
@@ -1413,6 +1453,7 @@
         let gameWon = false;
         let timer = 0;
         let timerInterval = null;
+        let timerStarted = false;
         let flagMode = false;
         let isMobile = window.innerWidth <= 480;
 
@@ -1805,6 +1846,7 @@
             gameOver = false;
             gameWon = false;
             timer = 0;
+            timerStarted = false;
             flagMode = false;
             
             clearInterval(timerInterval);
@@ -1929,6 +1971,8 @@
                         // Si ya está revelada, ignorar
                         if (revealed[r][c]) return;
                         
+                        ensureTimerStarted();
+                        
                         // Si NO tiene bandera (vacía)
                         if (!flagged[r][c]) {
                             // Primer toque: colocar bandera
@@ -1957,15 +2001,20 @@
             }
         }
 
+        // Iniciar timer en la primera interacción
+        function ensureTimerStarted() {
+            if (!timerStarted) {
+                timerStarted = true;
+                startTimer();
+            }
+        }
+
         // Manejar clic en celda
         function handleCellClick(r, c) {
             if (gameOver || gameWon) return;
             if (revealed[r][c]) return;
             
-            // Iniciar timer en el primer clic
-            if (timer === 0) {
-                startTimer();
-            }
+            ensureTimerStarted();
             
             if (flagMode) {
                 handleRightClick(r, c);
@@ -1998,6 +2047,8 @@
         function handleRightClick(r, c) {
             if (gameOver || gameWon) return;
             if (revealed[r][c]) return;
+            
+            ensureTimerStarted();
             
             if (!flagged[r][c] && !questioned[r][c]) {
                 // Vacío → Bandera
