@@ -385,7 +385,7 @@
             overflow: hidden;
             width: min(560px, calc(100dvh - 140px));
             height: min(560px, calc(100dvh - 140px));
-            touch-action: none;
+            touch-action: manipulation;
         }
 
         .square {
@@ -438,8 +438,8 @@
 
         /* Animación de movimiento */
         .piece-ghost {
-            position: absolute;
-            z-index: 50;
+            position: fixed;
+            z-index: 9999;
             pointer-events: none;
             transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
             line-height: 1;
@@ -669,12 +669,12 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 6px 12px;
+                padding: 2px 10px;
                 flex-shrink: 0;
             }
 
             .header h1 {
-                font-size: 1rem;
+                font-size: 0.9rem;
                 white-space: nowrap;
             }
 
@@ -682,8 +682,8 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                width: 34px;
-                height: 34px;
+                width: 30px;
+                height: 30px;
                 background: var(--bg-tertiary);
                 border-radius: 8px;
             }
@@ -691,7 +691,7 @@
             .game-layout {
                 flex-direction: column;
                 align-items: center;
-                padding: 2px 0;
+                padding: 0;
                 gap: 0;
                 flex: 1;
             }
@@ -703,12 +703,12 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 3px;
+                gap: 1px;
                 padding: 0 4px;
             }
 
             .board {
-                --board-size: min(98vw, calc(100dvh - 200px));
+                --board-size: min(98vw, calc(100dvh - 140px));
                 width: var(--board-size);
                 height: var(--board-size);
             }
@@ -719,15 +719,15 @@
 
             .player-bar {
                 width: var(--board-size, 98vw);
-                font-size: 0.65rem;
-                padding: 5px 8px;
-                gap: 6px;
+                font-size: 0.6rem;
+                padding: 2px 6px;
+                gap: 4px;
             }
 
-            .player-name { font-size: 0.65rem; }
-            .player-indicator { width: 8px; height: 8px; }
-            .captured { font-size: 0.85rem; min-height: 20px; }
-            .score-diff { font-size: 0.7rem; }
+            .player-name { font-size: 0.6rem; }
+            .player-indicator { width: 7px; height: 7px; }
+            .captured { font-size: 0.8rem; min-height: 14px; }
+            .score-diff { font-size: 0.65rem; }
 
             .coord-file, .coord-rank { font-size: 0.4rem; }
 
@@ -736,17 +736,22 @@
             .mobile-diff-row { display: flex; }
 
             .mobile-status .status-text {
-                font-size: 0.7rem;
-                padding: 6px;
+                font-size: 0.65rem;
+                padding: 1px 6px;
+            }
+
+            .mobile-diff-row {
+                padding: 1px 10px;
+                gap: 4px;
             }
 
             .mobile-controls {
-                padding: 4px 10px;
+                padding: 1px 10px;
             }
 
             .mobile-controls .action-btn {
-                padding: 8px;
-                font-size: 0.7rem;
+                padding: 4px 8px;
+                font-size: 0.65rem;
                 border-radius: 6px;
             }
         }
@@ -1609,16 +1614,33 @@
                 sq.appendChild(file);
             }
 
-            // Desktop click
-            sq.addEventListener('click', () => onSquareClick(i));
-
-            // Mobile touch - fast response without 300ms delay
+            // Unified click/touch handler
             let touchMoved = false;
-            sq.addEventListener('touchstart', () => { touchMoved = false; }, { passive: true });
-            sq.addEventListener('touchmove', () => { touchMoved = true; }, { passive: true });
+            let handledByTouch = false;
+
+            sq.addEventListener('touchstart', () => {
+                touchMoved = false;
+                handledByTouch = false;
+            }, { passive: true });
+
+            sq.addEventListener('touchmove', () => {
+                touchMoved = true;
+            }, { passive: true });
+
             sq.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                if (!touchMoved) onSquareClick(i);
+                if (!touchMoved) {
+                    handledByTouch = true;
+                    e.preventDefault();
+                    onSquareClick(i);
+                }
+            });
+
+            sq.addEventListener('click', (e) => {
+                if (handledByTouch) {
+                    handledByTouch = false;
+                    return;
+                }
+                onSquareClick(i);
             });
 
             boardEl.appendChild(sq);
@@ -1756,7 +1778,6 @@
         const toSq = squares[to];
         if (!fromSq || !toSq) { callback(); return; }
 
-        const boardRect = boardEl.getBoundingClientRect();
         const fromRect = fromSq.getBoundingClientRect();
         const toRect = toSq.getBoundingClientRect();
 
@@ -1764,16 +1785,20 @@
         ghost.className = 'piece-ghost ' + (isWhite(piece) ? 'white' : 'black');
         ghost.textContent = PIECE_CHARS[piece];
         ghost.style.fontSize = getComputedStyle(fromSq).fontSize;
-        ghost.style.left = (fromRect.left - boardRect.left + fromRect.width / 2) + 'px';
-        ghost.style.top = (fromRect.top - boardRect.top + fromRect.height / 2) + 'px';
+        // Position fixed relative to viewport — avoids overflow:hidden clipping
+        ghost.style.position = 'fixed';
+        ghost.style.left = (fromRect.left + fromRect.width / 2) + 'px';
+        ghost.style.top = (fromRect.top + fromRect.height / 2) + 'px';
         ghost.style.transform = 'translate(-50%, -50%)';
 
         // Hide original piece
         const origPiece = fromSq.querySelector('.piece');
         if (origPiece) origPiece.style.opacity = '0';
+        // Also hide destination piece during animation (for captures)
+        const destPiece = toSq.querySelector('.piece');
+        if (destPiece) destPiece.style.opacity = '0';
 
-        boardEl.style.position = 'relative';
-        boardEl.appendChild(ghost);
+        document.body.appendChild(ghost);
 
         const dx = toRect.left - fromRect.left;
         const dy = toRect.top - fromRect.top;
@@ -2005,11 +2030,8 @@
         document.removeEventListener('touchstart', initAudioTouch);
     }, { once: true });
 
-    // Prevent context menu and long-press on board
+    // Prevent context menu on board
     boardEl.addEventListener('contextmenu', e => e.preventDefault());
-    boardEl.addEventListener('touchstart', e => {
-        if (e.target.closest('.square')) e.preventDefault();
-    }, { passive: false });
 
     // PWA
     if ('serviceWorker' in navigator) {
