@@ -1,5 +1,5 @@
-/* ============================================================
-   BUSCAMINAS - CSS Específico
+﻿/* ============================================================
+   BUSCAMINAS - CSS Espec├¡fico
    ============================================================ */
 
 :root {
@@ -496,7 +496,7 @@ h1 {
 }
 
 .mobile-diff-current::after {
-    content: '▼';
+    content: 'Ôû╝';
     font-size: 0.5rem;
     transition: transform 0.2s;
 }

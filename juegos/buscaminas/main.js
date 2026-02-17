@@ -1,8 +1,8 @@
 // Configuración del juego
 const difficulties = {
-    easy: { rows: 8, cols: 6, mines: 10 },     
-    medium: { rows: 10, cols: 8, mines: 20 }, 
-    hard: { rows: 12, cols: 10, mines: 25 }     
+    easy: { rows: 8, cols: 6, mines: 13 },     
+    medium: { rows: 10, cols: 8, mines: 23 }, 
+    hard: { rows: 12, cols: 10, mines: 30 }     
 };
 
 let currentDifficulty = 'easy';
@@ -424,16 +424,61 @@ function createBoard() {
     }
 }
 
-// Colocar minas. Si se pasa excludeCells, esas celdas (y vecinas del primer clic) no tendrán mina.
+// Barajar array in situ (Fisher-Yates)
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+// Colocar minas repartidas en 4 cuadrantes (partes iguales). excludeCells = celdas prohibidas (primer clic y vecinas).
 function placeMines(excludeCells = []) {
     const excluded = new Set(excludeCells.map(([r, c]) => `${r},${c}`));
-    let count = 0;
-    while (count < config.mines) {
-        const r = Math.floor(Math.random() * config.rows);
-        const c = Math.floor(Math.random() * config.cols);
-        if (board[r][c] !== -1 && !excluded.has(`${r},${c}`)) {
+    const midR = Math.floor(config.rows / 2);
+    const midC = Math.floor(config.cols / 2);
+    const quadrants = [
+        { r: [0, midR], c: [0, midC] },
+        { r: [0, midR], c: [midC, config.cols] },
+        { r: [midR, config.rows], c: [0, midC] },
+        { r: [midR, config.rows], c: [midC, config.cols] }
+    ];
+    const cellsByQuad = quadrants.map(q => {
+        const list = [];
+        for (let r = q.r[0]; r < q.r[1]; r++) {
+            for (let c = q.c[0]; c < q.c[1]; c++) {
+                if (!excluded.has(`${r},${c}`)) list.push([r, c]);
+            }
+        }
+        return list;
+    });
+    const total = config.mines;
+    const base = Math.floor(total / 4);
+    const remainder = total % 4;
+    const perQuad = [base + (0 < remainder ? 1 : 0), base + (1 < remainder ? 1 : 0), base + (2 < remainder ? 1 : 0), base + (3 < remainder ? 1 : 0)];
+    let overflow = 0;
+    for (let q = 0; q < 4; q++) {
+        const list = cellsByQuad[q];
+        const need = perQuad[q];
+        shuffle(list);
+        const place = Math.min(need, list.length);
+        for (let i = 0; i < place; i++) {
+            const [r, c] = list[i];
             board[r][c] = -1;
-            count++;
+        }
+        overflow += need - place;
+    }
+    if (overflow > 0) {
+        const allAvailable = [];
+        for (let r = 0; r < config.rows; r++) {
+            for (let c = 0; c < config.cols; c++) {
+                if (board[r][c] !== -1 && !excluded.has(`${r},${c}`)) allAvailable.push([r, c]);
+            }
+        }
+        shuffle(allAvailable);
+        for (let i = 0; i < overflow && i < allAvailable.length; i++) {
+            const [r, c] = allAvailable[i];
+            board[r][c] = -1;
         }
     }
 }
