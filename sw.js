@@ -3,6 +3,7 @@ const ASSETS = [
     './',
     './index.html',
     './styles.css',
+    './app.js',
     'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap'
 ];
 
