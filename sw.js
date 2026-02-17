@@ -1,7 +1,8 @@
-const CACHE_NAME = 'arcade-v1';
+const CACHE_NAME = 'arcade-v3';
 const ASSETS = [
     './',
     './index.html',
+    './styles.css',
     'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap'
 ];
 

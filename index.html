@@ -13,51 +13,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
     <style>
-        :root {
-            --bg-primary: #0a0e27;
-            --bg-secondary: #151b3d;
-            --bg-tertiary: #1e2749;
-            --accent-primary: #ff006e;
-            --accent-secondary: #00f5ff;
-            --accent-tertiary: #ffbe0b;
-            --text-primary: #ffffff;
-            --text-secondary: #a8b2d1;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Space Mono', monospace;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #1a0e2e 100%);
-            color: var(--text-primary);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
             overflow-x: hidden;
         }
 
-        /* Fondo animado */
         body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 50%, rgba(255, 0, 110, 0.08) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(0, 245, 255, 0.08) 0%, transparent 50%),
                 radial-gradient(circle at 50% 80%, rgba(255, 190, 11, 0.05) 0%, transparent 50%);
-            animation: pulse 8s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
         }
 
         @keyframes pulse {
@@ -65,7 +32,6 @@
             50% { opacity: 1; }
         }
 
-        /* Header */
         .header {
             position: relative;
             z-index: 1;
@@ -76,9 +42,7 @@
         }
 
         .header h1 {
-            font-family: 'Orbitron', sans-serif;
             font-size: 2.5rem;
-            font-weight: 900;
             background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -94,7 +58,11 @@
             text-transform: uppercase;
         }
 
-        /* Grid de juegos */
+        .install-wrapper {
+            margin-top: 12px;
+            gap: 0;
+        }
+
         .games-grid {
             position: relative;
             z-index: 1;
@@ -106,7 +74,6 @@
             max-width: 900px;
         }
 
-        /* Card de juego */
         .game-card {
             background: var(--bg-secondary);
             border: 2px solid var(--bg-tertiary);
@@ -174,7 +141,6 @@
             align-self: flex-start;
         }
 
-        /* Card "próximamente" */
         .game-card.coming-soon {
             opacity: 0.5;
             pointer-events: none;
@@ -187,56 +153,6 @@
             color: var(--accent-tertiary);
         }
 
-        /* PWA Install */
-        .install-wrapper {
-            display: none;
-            align-items: center;
-            gap: 0;
-            position: relative;
-            flex-shrink: 0;
-            margin-top: 12px;
-        }
-        .install-wrapper.visible {
-                display: flex;
-        }
-        .install-btn {
-                display: flex;
-                align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            background: linear-gradient(135deg, var(--accent-secondary), #00c4cc);
-            color: var(--bg-primary);
-            border: none;
-            border-radius: 8px 0 0 8px;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.75rem;
-            font-weight: 700;
-                cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 245, 255, 0.3);
-        }
-        .install-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 245, 255, 0.5);
-        }
-        .install-dismiss {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            padding: 8px 10px;
-            background: rgba(0, 245, 255, 0.15);
-            color: var(--accent-secondary);
-            border: none;
-            border-radius: 0 8px 8px 0;
-                font-size: 0.7rem;
-            cursor: pointer;
-        }
-        .install-dismiss:hover {
-            background: rgba(255, 0, 110, 0.3);
-            color: var(--accent-primary);
-        }
-
-        /* Footer */
         .footer {
             position: relative;
             z-index: 1;
@@ -247,7 +163,6 @@
             opacity: 0.6;
         }
 
-        /* Responsive */
         @media (max-width: 480px) {
             .header {
                 padding: 30px 16px 16px;
