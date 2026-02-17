@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0e27" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0a0e27" media="(prefers-color-scheme: dark)">
+    <meta name="description" content="Zudoku - Sudoku clásico con diseño moderno">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Zudoku">
+    <link rel="manifest" href="../../manifest.json">
+    <title>🔢 Zudoku</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="back-row">
+        <a href="../../index.html" class="back-btn" title="Volver al menú">← Menú</a>
+    </div>
+    <div class="header">
+        <a href="../../index.html" class="header-icon-btn back-btn-mobile" title="Volver al menú">←</a>
+        <button class="header-icon-btn" id="mobileRecordsBtn" title="Records">🏆</button>
+        <div class="header-center">
+            <h1>🔢 Zudoku</h1>
+            <div class="subtitle">Sudoku</div>
+            <div class="mobile-difficulty-dropdown" id="mobileDiffDropdown">
+                <button class="mobile-diff-current" id="mobileDiffCurrent">Fácil</button>
+                <div class="mobile-diff-menu" id="mobileDiffMenu">
+                    <button class="mobile-diff-option active" data-difficulty="easy">Fácil</button>
+                    <button class="mobile-diff-option" data-difficulty="medium">Medio</button>
+                    <button class="mobile-diff-option" data-difficulty="hard">Difícil</button>
+                </div>
+            </div>
+        </div>
+        <button class="header-icon-btn" id="mobileSoundBtn" title="Sonido"><span id="mobileSoundIcon">🔊</span></button>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="stats-panel">
+                <div class="stat-card">
+                    <div class="stat-label">Errores</div>
+                    <div class="stat-value" id="errorsCount">0</div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-primary" id="newGameBtn"><span class="btn-label-desktop">Nuevo Juego</span><span class="btn-label-mobile">▶</span></button>
+                    <button class="btn btn-secondary" id="soundBtn" title="Activar/Desactivar sonidos">🔊</button>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Tiempo</div>
+                    <div class="stat-value" id="timer">0</div>
+                </div>
+            </div>
+
+            <div class="difficulty-selector">
+                <button class="difficulty-btn active" data-difficulty="easy">Fácil</button>
+                <button class="difficulty-btn" data-difficulty="medium">Medio</button>
+                <button class="difficulty-btn" data-difficulty="hard">Difícil</button>
+            </div>
+
+            <div class="game-board">
+                <div class="sudoku-grid" id="sudokuGrid"></div>
+            </div>
+            <!-- Input oculto para abrir teclado en móvil; teclado físico en desktop -->
+            <input type="text" inputmode="numeric" pattern="[0-9]*" id="keyboardInput" class="keyboard-input" autocomplete="off" aria-hidden="true" maxlength="1" />
+        </div>
+
+        <div class="records-panel" id="recordsPanel">
+            <div class="records-title">🏆 Top 10</div>
+            <div class="records-difficulty-tabs">
+                <button class="records-tab active" data-records-diff="easy">Fácil</button>
+                <button class="records-tab" data-records-diff="medium">Medio</button>
+                <button class="records-tab" data-records-diff="hard">Difícil</button>
+            </div>
+            <div class="records-list" id="recordsList"></div>
+        </div>
+    </div>
+
+    <div class="mobile-records-overlay" id="mobileRecordsOverlay">
+        <div class="mobile-records-content">
+            <div class="mobile-records-header">
+                <div class="records-title" style="margin-bottom:0">🏆 Top 10</div>
+                <button class="mobile-records-close" id="mobileRecordsClose">✕</button>
+            </div>
+            <div class="mobile-records-tabs">
+                <button class="mobile-records-tab active" data-records-diff="easy">Fácil</button>
+                <button class="mobile-records-tab" data-records-diff="medium">Medio</button>
+                <button class="mobile-records-tab" data-records-diff="hard">Difícil</button>
+            </div>
+            <div class="mobile-records-list" id="mobileRecordsList"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="gameModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">¡Victoria!</div>
+            <div class="modal-message" id="modalMessage">Has completado el Zudoku</div>
+            <button class="btn btn-primary" id="modalBtn">Jugar de Nuevo</button>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
