@@ -15,6 +15,7 @@ let gameWon = false;
 let timer = 0;
 let timerInterval = null;
 let timerStarted = false;
+let minesPlaced = false;  // minas se colocan tras el primer clic para que no pierda a la primera
 
 // Sistema de sonidos
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -397,12 +398,13 @@ function initGame() {
     gameWon = false;
     timer = 0;
     timerStarted = false;
+    minesPlaced = false;
     
     clearInterval(timerInterval);
     timerDisplay.textContent = '0';
     
     createBoard();
-    placeMines();
+    // No colocar minas aquí: se colocan en el primer clic para que esa celda (y vecinas) estén libres
     calculateNumbers();
     renderBoard();
     updateStats();
@@ -422,15 +424,16 @@ function createBoard() {
     }
 }
 
-// Colocar minas
-function placeMines() {
-    let minesPlaced = 0;
-    while (minesPlaced < config.mines) {
+// Colocar minas. Si se pasa excludeCells, esas celdas (y vecinas del primer clic) no tendrán mina.
+function placeMines(excludeCells = []) {
+    const excluded = new Set(excludeCells.map(([r, c]) => `${r},${c}`));
+    let count = 0;
+    while (count < config.mines) {
         const r = Math.floor(Math.random() * config.rows);
         const c = Math.floor(Math.random() * config.cols);
-        if (board[r][c] !== -1) {
+        if (board[r][c] !== -1 && !excluded.has(`${r},${c}`)) {
             board[r][c] = -1;
-            minesPlaced++;
+            count++;
         }
     }
 }
@@ -567,6 +570,22 @@ function handleCellClick(r, c) {
     ensureTimerStarted();
     
     if (flagged[r][c]) return;
+    
+    // Primer clic: colocar minas evitando esta celda y sus 8 vecinas para que nunca sea mina
+    if (!minesPlaced) {
+        const exclude = [[r, c]];
+        for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+                const nr = r + dr, nc = c + dc;
+                if (nr >= 0 && nr < config.rows && nc >= 0 && nc < config.cols && (nr !== r || nc !== c)) {
+                    exclude.push([nr, nc]);
+                }
+            }
+        }
+        placeMines(exclude);
+        calculateNumbers();
+        minesPlaced = true;
+    }
     
     if (board[r][c] === -1) {
         sounds.lose();
